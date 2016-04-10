@@ -10,10 +10,12 @@ var Engager = Interactive.extend({
     engagedEvents: {},
     inRange: [],
     currentTarget: null,
+    modules: [],
     ctor: function(resource, tags) {
+        this._super(resource, tags);
+
         this.id = _EngagerIncrement++;
         tags.push('engager');
-        this._super(resource, tags);
 
         this.scheduleUpdate();
     },
