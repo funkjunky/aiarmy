@@ -1,7 +1,8 @@
 var Thief = Leveler.extend({
     modules: [DoubleAttack(0.5)],
     ctor: function(resource, level) {
-        this._super(resource, ['thief'], 100, level);
+        this._super(resource, ['thief'], level);
+        this.hp = 100;
 
         this.attacks = [
             new BasicAttack({               //Spikes every 2 seconds
@@ -26,6 +27,5 @@ var Thief = Leveler.extend({
                 },
             }]),
         ];
-
     },
 });

@@ -15,6 +15,11 @@ var ModuleTemplate = function() {
             //For when this has defeated an enemy
             //Examples: celebration animation, buff, debuff from guilt
         },
+
+        defeated: function(enemy) {
+            //For when the character dies
+            //Examples: explode in an area for damage, cancel death but start a cooldown timer
+        },
         
         //requires 'engager', without engager should give a warning on creation, but not an error.
         startAttack: function() {

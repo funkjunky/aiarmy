@@ -2,9 +2,11 @@ var Leveler = Battler.extend({
     level: 1,
     exp: 0,
     expForNextLevel: 10,
-    ctor: function(resource, tags, hp, level) {
+    ctor: function(resource, tags, level) {
         tags.push('leveler');
-        this._super(resource, tags, hp);
+        this._super(resource, tags);
+
+        this.modules.push(GainExpFromMonsters);
         if(level)
             this.level = level;
     },

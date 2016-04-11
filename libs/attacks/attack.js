@@ -36,6 +36,10 @@ Attack.prototype.update = function(dt, activeAttackName) {
     }
     else if((this.attackCooldown -= dt) <= 0) {
         this.startAttack();
+        this.owner.modules.forEach(function(module) {
+            if(module.startAttack)
+                module.startAttack.call(this, this.currentTarget);
+        }, this);
         return this.name;   //starting attack, set activeAttackName
     }
 };
@@ -58,12 +62,20 @@ Attack.prototype.engage = function(enemy) {
             this.inRange.splice(this.inRange.indexOf(enemy), 1);
         }),
     };
+    this.owner.modules.forEach(function(module) {
+        if(module.engage)
+            module.engage.call(this, enemy);
+    }, this.owner);
 };
 
 Attack.prototype.disengage = function(enemy) {
     this.currentTarget = null;
     this.owner.fenceEvents.splice(this.owner.fenceEvents.indexOf(this.engagedEvents[enemy.id].enter), 1);
     this.owner.fenceEvents.splice(this.owner.fenceEvents.indexOf(this.engagedEvents[enemy.id].exit), 1);
+    this.owner.modules.forEach(function(module) {
+        if(module.engage)
+            module.disengage.call(this, enemy);
+    }, this.owner);
 };
 
 Attack.prototype.startAttack: function() {

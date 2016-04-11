@@ -16,9 +16,19 @@ var Engager = Interactive.extend({
         this.attacks.forEach(function(attack) {
             attack.update(dt);
         }, this);
+        this.modules.forEach(function(module) {
+            module.update.call(this, dt);
+        }, this);
     },
 
     considerTarget: function(currentTarget, consideredTarget, attack) {
+        var found = false;
+        this.modules.forEach(function(module) {
+            if(module.considerTarget)
+                found = module.considerTarget(currentTarget, consideredTarget, attack);
+        }, this);
+        if(found)
+            return found;
         //default is to attack the closest target
         if(MathHelper.dist(currentTarget, this) < MathHelper.dist(consideredTarget, this))
             return enemy;
