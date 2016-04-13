@@ -12,7 +12,7 @@ GameMap.prototype.move = function(character, loc, speed) {
     var path = this.getAStar(this.getCoords(character), this.getCoords(loc));
     console.log('path: ', path);
     if(!path.length)
-        return false;
+        return null;
     var last = path.splice(0,1)[0];   //remove the starting point from the path.
     var moves = path.map(function(point, index) {
         var duration = speed * MathHelper.dist(point, last);
@@ -21,8 +21,7 @@ GameMap.prototype.move = function(character, loc, speed) {
     }.bind(this));
     //NOTE: sequence gobbles up the move. So moves well be empty after giving it to sequence.
     character.aMoveAction = cc.sequence(moves);
-    character.runAction(character.aMoveAction);
-    return true;
+    return character.runAction(character.aMoveAction);
 };
 
 GameMap.prototype.getCoords = function(screenLoc) {

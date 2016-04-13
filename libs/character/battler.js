@@ -33,5 +33,6 @@ var Battler = Engager.extend({
             if(module.enemyDefeated)
                 module.defeated.call(this, enemy);
         }, this);
+        this.removeFromParent();
     },
 });

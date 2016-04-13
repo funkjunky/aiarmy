@@ -5,8 +5,10 @@ var IcyAttack = function(props, attrs) {
   Attack.call(this, props, attrs); 
 };
 
-TestAttack.prototype.finishAttack = function(victim) {
-    victim.attackCooldown += 0.5;
+//IDEA: some attacks ignore the speed modifier of a character and others don't
+//      So icy would slow down a sword, but not a gun or magic.
+IcyAttack.prototype.finishAttack = function(theAttack, victim) {
+    //TODO: this well only affect attacks in progress. need debuff to do properly.
     victim.attackAnimationCooldown += 0.5;
-    Attack.prototype.call(this, victim);
+    Attack.prototype.finishAttack.call(this, theAttack, victim);
 };

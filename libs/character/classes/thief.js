@@ -1,31 +1,27 @@
 var Thief = Leveler.extend({
     modules: [DoubleAttack(0.5)],
-    ctor: function(resource, level) {
-        this._super(resource, ['thief'], level);
+    ctor: function(level) {
+        this._super(res.jane, ['thief'], level); //TODO: need a better resource manager than 'res'
         this.hp = 100;
 
         this.attacks = [
-            new BasicAttack({               //Spikes every 2 seconds
-                    range: 1,
-                    attackCooldown: 2,
-                    attackAnimationCooldown: 0.1,
-                }, {
-                    baseDamage: 1,
+            new BasicAttack({
+                range: 32 * 2,
+                attackCooldown: 1,
+                attackAnimationCooldown: 1,
+            }, {
+                baseDamage: 2,
             }),
-            new MutuallyExclusiveAttack([new BasicAttack({
-                    range: 2,
-                    attackCooldown: 1,
-                    attackAnimationCooldown: 1,
-                }, {
-                    baseDamage: 2,
-            }), new TestAttack({
-                    range: 5,
-                    attackCooldown: 2,
-                    attackAnimationCooldown: 2,
-                }, {
-                    test: 'test-value',
-                },
-            }]),
+            new BasicAttack({
+                range: 32 * 6,
+                attackCooldown: 2,
+                attackAnimationCooldown: 2,
+            }, {
+                baseDamage: 2,
+            }),
         ];
+        this.modules.push(MutuallyExclusiveAttacks(this.attacks, function comp(a, b) {
+            return (a.baseDamage > b.baseDamage) ? a : b;
+        });
     },
 });

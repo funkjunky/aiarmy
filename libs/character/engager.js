@@ -2,6 +2,7 @@ var _EngagerIncrementer = 0;
 var Engager = Interactive.extend({
     id: -1, //TODO: check to see if sprites already had ids... I don't want to overwrite something they already had.
     attacks: [],
+    activeAttack: null,
     modules: [],
     ctor: function(resource, tags) {
         this._super(resource, tags);
@@ -13,6 +14,16 @@ var Engager = Interactive.extend({
     },
 
     update: function(dt) {
+        if(this.activeAttack && this.activeAttack.attacking)
+            if((this.attackAnimationCooldown -= dt) <= 0) {
+                //TODO: make a function to handle calling another function, but also for modules.
+                this.activeAttack.finishAttack(this.activeAttack.currentTarget);
+                this.modules.forEach(function(module) {
+                    if(module.finishAttack)
+                        module.finishAttack.call(this.activeAttack, this.currentTarget);
+                }, this);
+            }
+                
         this.attacks.forEach(function(attack) {
             attack.update(dt);
         }, this);

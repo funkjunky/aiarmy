@@ -10,8 +10,8 @@ var Attack = function(owner, props, attrs) {
     this.engagedEvents = {};
 
     this.attackActive = false;
+    this.attacking = false;
     this.attackCooldown = 0;
-    this.attackAnimationCooldown = this.props.attackAnimationCooldown;
 
     this.inRange = [];
 
@@ -23,18 +23,11 @@ Attack.prototype.update = function(dt, activeAttackName) {
         return;
 
     this.updateTarget();
-
-    if((this.attackActive && (this.attackAnimationCooldown -= dt) <= 0) {
-        //TODO: make a function to handle calling another function, but also for modules.
-        this.finishAttack(this.currentTarget);
-        this.owner.modules.forEach(function(module) {
-            if(module.finishAttack)
-                module.finishAttack.call(this, this.currentTarget);
-        }, this);
-        return true; //Done attack, release activeAttackName for mutuallyExclusiveAttack
-        //TODO: i shouldn't have mutually exclusive code in here?? hmmm
+    if(!this.attacking && this.attackCooldown <= 0) {   //we just started preparing for our attack then.
+        this.prepareAttack();
     }
-    else if((this.attackCooldown -= dt) <= 0) {
+
+    if(!this.attacking && (this.attackCooldown -= dt) <= 0) {
         this.startAttack();
         this.owner.modules.forEach(function(module) {
             if(module.startAttack)
@@ -53,38 +46,44 @@ Attack.prototype.updateTarget = function() {
     });
 };
 
-Attack.prototype.engage = function(enemy) {
-    this.owner.engagedEvents[enemy.id] = {
-        enter: this.owner.onFenceEnter(enemy, this.stats.range, function(enemy, distance) {
-            this.inRange.push(enemy);
+Attack.prototype.engage = function(theAttack, enemy) {
+    this.engagedEvents[enemy.id] = {
+        enter: this.onFenceEnter(enemy, theAttack.stats.range, function(enemy, distance) {
+            theAttack.inRange.push(enemy);
         }),
-        exit: this.owner.onFenceExit(enemy, this.stats.range, function(enemy, distance) {
-            this.inRange.splice(this.inRange.indexOf(enemy), 1);
+        exit: this.onFenceExit(enemy, theAttack.stats.range, function(enemy, distance) {
+            theAttack.inRange.splice(theAttack.inRange.indexOf(enemy), 1);
         }),
     };
-    this.owner.modules.forEach(function(module) {
+    this.modules.forEach(function(module) {
         if(module.engage)
             module.engage.call(this, enemy);
-    }, this.owner);
+    }, this);
 };
 
-Attack.prototype.disengage = function(enemy) {
-    this.currentTarget = null;
-    this.owner.fenceEvents.splice(this.owner.fenceEvents.indexOf(this.engagedEvents[enemy.id].enter), 1);
-    this.owner.fenceEvents.splice(this.owner.fenceEvents.indexOf(this.engagedEvents[enemy.id].exit), 1);
-    this.owner.modules.forEach(function(module) {
+Attack.prototype.disengage = function(theAttack, enemy) {
+    theAttack.currentTarget = null;
+    this.fenceEvents.splice(this.fenceEvents.indexOf(theAttack.engagedEvents[enemy.id].enter), 1);
+    this.fenceEvents.splice(this.fenceEvents.indexOf(theAttack.engagedEvents[enemy.id].exit), 1);
+    this.modules.forEach(function(module) {
         if(module.engage)
             module.disengage.call(this, enemy);
     }, this.owner);
 };
 
-Attack.prototype.startAttack: function() {
-    this.attackActive = true;
+Attack.prototype.prepareAttack: function(theAttack) {
+    theAttack.attackActive = true;
+    theAttack.attackCooldown = theAttack.stats.attackCooldown;
 };
 
-Attack.prototype.finishAttack: function(victim) {
-    this.attackActive = false;
+Attack.prototype.startAttack: function(theAttack) {
+    theAttack.attacking = true;
+    this.attackAnimationCooldown = theAttack.stats.attackAnimationCooldown;
+};
 
-    this.attackCooldown = this.stats.attackCooldown;
-    this.attackAnimationCooldown = this.stats.attackAnimationCooldown;
+Attack.prototype.finishAttack: function(theAttack, victim) {
+    theAttack.attackActive = false;
+    theAttack.attacking = false;
+
+    theAttack.attackCooldown = theAttack.stats.attackCooldown;
 };

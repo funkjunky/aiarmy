@@ -22,12 +22,17 @@ var ModuleTemplate = function() {
         },
         
         //requires 'engager', without engager should give a warning on creation, but not an error.
-        startAttack: function() {
+        prepareAttack: function(theAttack) {
+            //In here, put anything you want to be done when we start to wait for the cooldown of an attack
+            //Examples: charge up animation, Take bonus damage, set flag to reflect damage or speed up cast based on dmg
+            //IDEA: a mage that gets bonuses for casting while taking damage! Tank mage!! (dark mage, aggression fuels him! [spell's range increasing based on damage? How cool would that be!])
+        }
+        startAttack: function(theAttack) {
             //In here, put anything you want to be done when a sprite starts an attack
             //Examples: take dmg to start attack, mp loss, weakened state, invuln?
             console.warning('Module Template startAttack Called...');
         },
-        finishAttack: function() {
+        finishAttack: function(theAttack, target) {
             //In here, put anything you want to be done when sprite finishs its attack
             //Examples: basic attack, spells, etc. This well likely be the main function to be used.
         },
@@ -37,11 +42,11 @@ var ModuleTemplate = function() {
             //Default: closest target
             //Examples: attack weakest enemy, prioritize elfs, random
         },
-        engage: function(enemy) {
+        engage: function(theAttack, enemy) {
             //If you want to do something the moment a target has truly been chosen.
             //Examples: Mark as targeted, buff, chance target runs away?
         },
-        disengage: function(enemy) {
+        disengage: function(theAttack, enemy) {
             //If you want to do something the moment a target is no longer chosen
             //Example: enemy agros, enemy disengages, movement or dodge bonus until re-engaged.
         },

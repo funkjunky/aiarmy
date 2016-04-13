@@ -1,15 +1,17 @@
+var _globals = {};
 var HelloWorldLayer = InteractiveTopDownLayer.extend({
     ctor:function () {
         this._super();
 
         var gameMap = this.gameMap = new GameMap(new cc.TMXTiledMap(res.smallMap), "obstructions");
+        _globals.gameMap = gameMap;
 
-        var thief = this.createInteractive(res.jane, ['thief'], {
+        var thief = this.createInteractive(Thief, {
             x: cc.winSize.width / 2,
             y: cc.winSize.height / 2,
         });
 
-        var monster = this.createInteractive(res.mouse, ['monster'], {
+        var monster = this.createInteractive(Rat, {
             x: 150,
             y: 600,
         });

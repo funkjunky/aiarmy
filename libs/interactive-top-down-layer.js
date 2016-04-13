@@ -46,11 +46,11 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
         this._super(child, cleanup);
     },
 
-    createInteractive: function(resource, tags, location) {
-        var interactive = new Interactive(resource, tags);
+    createInteractive: function(Character, location) {
+        var interactive = new Character();
 
         this.interactives.push(interactive);
-        tags.forEach(function(tag) {
+        interactive.tags.forEach(function(tag) {
             //TODO: add an array helper to do this in on function. (create array if necessary)
             if(!this.interactivesByTag[tag])
                 this.interactivesByTag[tag] = [];
