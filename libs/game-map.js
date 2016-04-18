@@ -6,11 +6,12 @@ function GameMap(tiledMap, blockedTag) {
 
 //TODO: I think this should be in TopDownLayer instead...
 GameMap.prototype.move = function(character, loc, speed) {
+    if(pointsEqual(this.getCoords(character), this.getCoords(loc)))
+        return null;
     if(character.aMoveAction && !character.aMoveAction.isDone())
         character.stopAction(character.aMoveAction);
-    //Below is hyper basic, move sprite to location.
+    console.log('from, to: ', this.getCoords(character), this.getCoords(loc));
     var path = this.getAStar(this.getCoords(character), this.getCoords(loc));
-    console.log('path: ', path);
     if(!path.length)
         return null;
     var last = path.splice(0,1)[0];   //remove the starting point from the path.

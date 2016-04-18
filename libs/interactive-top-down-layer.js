@@ -18,12 +18,12 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
 
                 interactives.forEach(function(otherInteractive) {
                     if(interactive != otherInteractive)
-                        this.checkEvent(event, interactive, otherInteractive, fence.type);
+                        this.checkEvent(event, interactive, otherInteractive);
                 }, this);
             }, this);
         }, this);
     },
-    checkEvent: function(event, subject, object, type) {
+    checkEvent: function(event, subject, object) {
         var objectIndex = subject.eventsInteractivesInRange[event.id].indexOf(object);
         var distance = MathHelper.dist(subject, object);
 
@@ -38,7 +38,7 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
         else
             subject.eventsInteractivesInRange[event.id].splice(objectIndex);
 
-        if(inRange && type == 'onEnter' || !inRange && type == 'onExit')
+        if(inRange && event.type == 'onEnter' || !inRange && event.type == 'onExit')
             event.cb(object, distance);
     },
 

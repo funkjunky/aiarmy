@@ -9,8 +9,10 @@ var MutuallyExclusiveAttacks = function(attacks, comp) {
         };
     return {
         prepareAttack: function(theAttack) {
-            if(comp(activeAttack, theAttack))
+            if(activeAttack && comp(activeAttack, theAttack)) //if another activeAttack and not stronger, then turn off
                 theAttack.attacking = false;
+            else
+                activeAttack = theAttack;
         },
     };
 };

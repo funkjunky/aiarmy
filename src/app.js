@@ -13,12 +13,12 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
 
         var monster = this.createInteractive(Rat, {
             x: 150,
-            y: 600,
+            y: 500,
         });
 
 //            BubbleText.quickPrint('Hello!', character, {panOffset: {x: 0, y: 64}});
         thief.onFenceEnter('monster', 64*10, function(monster, distance) {
-            BubbleText.quickPrint('Engard!!', enemy, {panOffset: {x: 0, y: 64}});
+            BubbleText.quickPrint('Engard!!', monster, {panOffset: {x: 0, y: 64}});
         });
 
         thief.onFenceExit('monster', 128, function(monster, distance) {

@@ -54,13 +54,23 @@ var Interactive = cc.Sprite.extend({
         }.bind(this));
     },
     onFenceEnter: function(tagOrInteractive, range, cb) {
-        var event = {type: 'onEnter', tagOrInteractive: tagOrInteractive, range: range, cb: cb, id: ++eventIncrement};
+        var event = {type: 'onEnter', range: range, cb: cb, id: ++eventIncrement};
+        if(typeof tagOrInteractive == 'string')
+            event.tag = tagOrInteractive;
+        else
+            event.interactive = tagOrInteractive;
+
         this.fenceEvents.push(event);
         this.eventsInteractivesInRange[eventIncrement] = [];
         return event;
     },
     onFenceExit: function(tagOrInteractive, range, cb) {
-        var event = {type: 'onExit', tagOrInteractive: tagOrInteractive, range: range, cb: cb, id: ++eventIncrement};
+        var event = {type: 'onExit', range: range, cb: cb, id: ++eventIncrement};
+        if(typeof tagOrInteractive == 'string')
+            event.tag = tagOrInteractive;
+        else
+            event.interactive = tagOrInteractive;
+
         this.fenceEvents.push(event);
         this.eventsInteractivesInRange[eventIncrement] = [];
         return event;
@@ -75,6 +85,7 @@ var Interactive = cc.Sprite.extend({
 
     //TODO: I shouldn't use actions for seeking. This one is very dynamic. I should simply use update and move myself? maybe move from tile to tile during update?
     seek: function(object) {
+        console.log('object: ', object);
         this.goingTo = object;
         this.setNewSeek();
     },
@@ -82,7 +93,7 @@ var Interactive = cc.Sprite.extend({
     setNewSeek: function() {
         var gameMap = _globals.gameMap;
         var oldAction = this.goingToAction;
-        this.goingToAction = gameMap.move(this, object, 0.1);    //TODO: dont' hardcore speed. It should be on a lower level class I think? Not Interactive.
+        this.goingToAction = gameMap.move(this, this.goingTo, 0.1);    //TODO: dont' hardcore speed. It should be on a lower level class I think? Not Interactive.
         if(oldAction)
             this.stopAction(oldAction);
     },

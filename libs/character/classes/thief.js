@@ -4,14 +4,14 @@ var Thief = Leveler.extend({
         this.hp = 100;
 
         this.attacks = [
-            new BasicAttack({
+            new BasicAttack(this, {
                 range: 32 * 2,
                 attackCooldown: 1,
                 attackAnimationCooldown: 1,
             }, {
-                baseDamage: 2,
+                baseDamage: 3,
             }),
-            new BasicAttack({
+            new BasicAttack(this, {
                 range: 32 * 6,
                 attackCooldown: 2,
                 attackAnimationCooldown: 2,
@@ -20,6 +20,7 @@ var Thief = Leveler.extend({
             }),
         ];
         this.modules.push(EngageFirst(this));
+        this.modules.push(SeekToEngage());
         this.modules.push(MutuallyExclusiveAttacks(this.attacks, function comp(a, b) {
             return (a.baseDamage > b.baseDamage) ? a : b;
         }));

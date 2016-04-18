@@ -9,7 +9,7 @@ var Leveler = Battler.extend({
         if(level)
             this.level = level;
 
-        this.modules.push(GainExpFromMonsters);
+        this.modules.push(GainExpFromMonsters());
     },
     gainExp: function(exp) {
         this.exp += exp;

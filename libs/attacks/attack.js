@@ -18,8 +18,8 @@ var Attack = function(owner, props, attrs) {
     return this;
 };
 
-Attack.prototype.update = function(dt, activeAttackName) {
-    if(this.inRange.length <= 0 || (activeAttackName && activeAttackName != this.name))
+Attack.prototype.update = function(dt) {
+    if(this.inRange.length <= 0 || (this.activeAttack && this.activeAttack != this))
         return;
 
     this.updateTarget();
@@ -29,6 +29,7 @@ Attack.prototype.update = function(dt, activeAttackName) {
     }
 
     if(!this.attacking && (this.attackCooldown -= dt) <= 0) {
+        console.log('start attack?');
         this.startAttack();
         this.owner.trigger('startAttack', this);
         return this.name;   //starting attack, set activeAttackName
@@ -41,18 +42,21 @@ Attack.prototype.updateTarget = function() {
 
     this.inRange.forEach(function(enemy) {
         this.currentTarget = this.owner.considerTarget(this.currentTarget, enemy, this);
-    });
+    }, this);
 };
 
 Attack.prototype.engage = function(character, enemy) {
+    //console.log('engaging: ', character, enemy, enemy.id);
     this.engagedEvents[enemy.id] = {
-        enter: character.onFenceEnter(enemy, theAttack.stats.range, function(enemy, distance) {
+        enter: character.onFenceEnter(enemy, this.props.range, function(enemy, distance) {
+            //console.log('attack in range: ', this);
             this.inRange.push(enemy);
         }.bind(this)),
-        exit: character.onFenceExit(enemy, theAttack.stats.range, function(enemy, distance) {
+        exit: character.onFenceExit(enemy, this.props.range, function(enemy, distance) {
             this.inRange.splice(this.inRange.indexOf(enemy), 1);
         }.bind(this)),
     };
+
     this.owner.trigger('engage', this, enemy);
 };
 
@@ -65,17 +69,19 @@ Attack.prototype.disengage = function(character, enemy) {
 
 Attack.prototype.prepareAttack = function() {
     this.attackActive = true;
-    this.attackCooldown = this.stats.attackCooldown;
+    this.attackCooldown = this.props.attackCooldown;
 };
 
 Attack.prototype.startAttack = function() {
     this.attacking = true;
-    this.owner.attackAnimationCooldown = this.stats.attackAnimationCooldown;
+    this.owner.attackAnimationCooldown = this.props.attackAnimationCooldown;
+    this.owner.activeAttack = this;
 };
 
 Attack.prototype.finishAttack = function() {
     this.attackActive = false;
     this.attacking = false;
 
-    this.attackCooldown = this.stats.attackCooldown;
+    this.attackCooldown = this.props.attackCooldown;
+    this.owner.activeAttack = null;
 };

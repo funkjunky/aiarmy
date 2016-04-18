@@ -3,7 +3,7 @@ var Rat = Monster.extend({
     exp: 5,
     ctor: function() {
         this._super(res.mouse, ['rat', 'beast']);
-        this.attacks = [new BasicAttack({
+        this.attacks = [new BasicAttack(this, {
                 range: 32 * 2,
                 attackCooldown: 2,
                 attackAnimationCooldown: 1,
@@ -12,6 +12,6 @@ var Rat = Monster.extend({
             }
         )];
 
-        this.modules.push(AttacksBack);
+        this.modules.push(AttacksBack());
     },
 });
