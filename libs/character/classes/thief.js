@@ -1,5 +1,5 @@
 var Thief = Leveler.extend({
-    modules: [DoubleAttack(0.5)],
+    modules: [DoubleAttack(0.5), EngageFirst()],
     ctor: function(level) {
         this._super(res.jane, ['thief'], level); //TODO: need a better resource manager than 'res'
         this.hp = 100;

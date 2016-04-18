@@ -9,30 +9,16 @@ var Battler = Engager.extend({
         this._super(resource, tags);
     },
     takeAttack: function(attack, attacker) {
-        takeDamage(attack.dmg, attacker);
-        this.modules.forEach(function(module) {
-            if(module.takeAttack)
-                module.takeAttack.call(this, attack, attacker);
-        }, this);
+        this.trigger('takeDamage', attack.dmg, attacker);
     },
     takeDamage: function(dmg, attacker) {
         this.hp -= dmg;
-        this.modules.forEach(function(module) {
-            if(module.takeDamage)
-                module.takeDamage.call(this, attack, attacker);
-        }, this);
-        if(this.hp <= 0)
-            this.defeated(attacker);
+        if(this.hp <= 0) {
+            this.trigger('defeated', attacker);
+            attacker.trigger('enemyDefeated', this);
+        }
     },
     defeated: function(enemy) {
-        this.modules.forEach(function(module) {
-            if(module.defeated)
-                module.defeated.call(this, enemy);
-        }, this);
-        enemy.modules.forEach(function(module) {
-            if(module.enemyDefeated)
-                module.defeated.call(this, enemy);
-        }, this);
         this.removeFromParent();
     },
 });

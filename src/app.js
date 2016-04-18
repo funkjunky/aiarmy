@@ -19,17 +19,14 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
 //            BubbleText.quickPrint('Hello!', character, {panOffset: {x: 0, y: 64}});
         thief.onTagEnter('monster', 64*10, function(monster, distance) {
             BubbleText.quickPrint('Engard!!', enemy, {panOffset: {x: 0, y: 64}});
-            thief.engaged = monster;
         });
 
         thief.onTagEnter('monster', 64*10, function(monster, distance) {
             BubbleText.quickPrint('Hiya!!', enemy, {panOffset: {x: 0, y: 64}});
-            thief.inrange = true;
         });
 
         thief.onTagExit('monster', 128, function(monster, distance) {
             BubbleText.quickPrint('alright then.', enemy, {panOffset: {x: 0, y: 64}});
-            thief.inrange = false;
         });
 
         enemy.onSelect(function() {

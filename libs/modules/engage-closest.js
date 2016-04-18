@@ -1,9 +1,9 @@
-var EngageClosest = function(character) {
+var EngageClosest = function(this) {
     var monstersInRange = [];
-    character.onFenceEnter('monster', 10, function(monster, distance) {
+    this.onFenceEnter('monster', 10, function(monster, distance) {
         monstersInRange.push(monster);
     });
-    character.onFenceExit('monster', 10, function(monster, distance) {
+    this.onFenceExit('monster', 10, function(monster, distance) {
         monstersInRange.splice(monstersInRange.indexOf(monster), 1);
     });
     return {
@@ -21,7 +21,7 @@ var EngageClosest = function(character) {
             //engage the closest monster for each attack, if it's not already engaged.
             this.attacks.forEach(function(attack) {
                 if(!attack.engagedEvents[closest])
-                    attack.engage(attack, closest); //TODO: passing attack is really weird here... I think I should disconnect attack's engage and modules engage. Different names, slightly different purposes.
+                    attack.engage(this, closest); //TODO: passing attack is really weird here... I think I should disconnect attack's engage and modules engage. Different names, slightly different purposes.
             }, this);
         },
     };

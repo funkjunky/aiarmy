@@ -15,18 +15,13 @@ var Engager = Interactive.extend({
 
     update: function(dt) {
         if(this.activeAttack && this.activeAttack.attacking)
-            if((this.attackAnimationCooldown -= dt) <= 0) {
-                //TODO: make a function to handle calling another function, but also for modules.
-                this.activeAttack.finishAttack(this.activeAttack.currentTarget);
-                this.modules.forEach(function(module) {
-                    if(module.finishAttack)
-                        module.finishAttack.call(this.activeAttack, this.currentTarget);
-                }, this);
-            }
+            if((this.attackAnimationCooldown -= dt) <= 0)
+                this.trigger('finishAttack', this.activeAttack.currentTarget);
                 
         this.attacks.forEach(function(attack) {
             attack.update(dt);
         }, this);
+        //Unique module. called on it's own.
         this.modules.forEach(function(module) {
             module.update.call(this, dt);
         }, this);
@@ -34,6 +29,7 @@ var Engager = Interactive.extend({
 
     considerTarget: function(currentTarget, consideredTarget, attack) {
         var found = false;
+        //Special case, shouldn't use trigger. TODO: this seems messy?
         this.modules.forEach(function(module) {
             if(module.considerTarget)
                 found = module.considerTarget(currentTarget, consideredTarget, attack);
@@ -49,5 +45,14 @@ var Engager = Interactive.extend({
 
     takeAttack: function(attack, attacker) {
         console.error('takeAttack hasn\'t been implemented!', attack, attacker);
+    },
+
+    trigger: function(moduleEvent) {
+        var args = arguments.splice(1, 1);
+        this[moduleEvent].call(this, args);
+        this.modules.forEach(function(module) {
+            if(module[moduleEvent])
+                module[moduleEvent].apply(this, args); 
+        }, this);
     },
 });

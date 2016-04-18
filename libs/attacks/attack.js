@@ -25,14 +25,12 @@ Attack.prototype.update = function(dt, activeAttackName) {
     this.updateTarget();
     if(!this.attacking && this.attackCooldown <= 0) {   //we just started preparing for our attack then.
         this.prepareAttack();
+        this.owner.trigger('prepareAttack', this);
     }
 
     if(!this.attacking && (this.attackCooldown -= dt) <= 0) {
         this.startAttack();
-        this.owner.modules.forEach(function(module) {
-            if(module.startAttack)
-                module.startAttack.call(this, this.currentTarget);
-        }, this);
+        this.owner.trigger('startAttack', this);
         return this.name;   //starting attack, set activeAttackName
     }
 };
@@ -46,29 +44,23 @@ Attack.prototype.updateTarget = function() {
     });
 };
 
-Attack.prototype.engage = function(theAttack, enemy) {
+Attack.prototype.engage = function(character, enemy) {
     this.engagedEvents[enemy.id] = {
-        enter: this.onFenceEnter(enemy, theAttack.stats.range, function(enemy, distance) {
-            theAttack.inRange.push(enemy);
-        }),
-        exit: this.onFenceExit(enemy, theAttack.stats.range, function(enemy, distance) {
-            theAttack.inRange.splice(theAttack.inRange.indexOf(enemy), 1);
-        }),
+        enter: character.onFenceEnter(enemy, theAttack.stats.range, function(enemy, distance) {
+            this.inRange.push(enemy);
+        }.bind(this)),
+        exit: character.onFenceExit(enemy, theAttack.stats.range, function(enemy, distance) {
+            this.inRange.splice(this.inRange.indexOf(enemy), 1);
+        }.bind(this)),
     };
-    this.modules.forEach(function(module) {
-        if(module.engage)
-            module.engage.call(this, enemy);
-    }, this);
+    this.owner.trigger('engage', this, enemy);
 };
 
-Attack.prototype.disengage = function(theAttack, enemy) {
+Attack.prototype.disengage = function(character, enemy) {
     theAttack.currentTarget = null;
-    this.fenceEvents.splice(this.fenceEvents.indexOf(theAttack.engagedEvents[enemy.id].enter), 1);
-    this.fenceEvents.splice(this.fenceEvents.indexOf(theAttack.engagedEvents[enemy.id].exit), 1);
-    this.modules.forEach(function(module) {
-        if(module.engage)
-            module.disengage.call(this, enemy);
-    }, this.owner);
+    character.fenceEvents.splice(character.fenceEvents.indexOf(this.engagedEvents[enemy.id].enter), 1);
+    character.fenceEvents.splice(character.fenceEvents.indexOf(this.engagedEvents[enemy.id].exit), 1);
+    this.owner.trigger('disengage', this, enemy);
 };
 
 Attack.prototype.prepareAttack: function(theAttack) {
