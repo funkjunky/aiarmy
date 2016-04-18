@@ -12,13 +12,36 @@
     "modules" : ["cocos2d"],
 
     "jsList" : [
-        "libs/touch-debug-layer.js",
+            "libs/attacks/attack.js",
+            "libs/attacks/basic-attack.js",
+            "libs/attacks/icy-attack.js",
+
+                "libs/character/classes/thief.js",
+
+                "libs/character/monsters/rat.js",
+
+            "libs/character/battler.js",
+            "libs/character/engager.js",
+            "libs/character/interactive.js",
+            "libs/character/leveler.js",
+            "libs/character/monster.js",
+
+            "libs/modules/attacks-back.js",
+            "libs/modules/double-attack.js",
+            "libs/modules/engage-closest.js",
+            "libs/modules/engage-first.js",
+            "libs/modules/gain-exp-from-monsters.js",
+            "libs/modules/module-template.js",
+            "libs/modules/mutually-exclusive-attacks.js",
+            "libs/modules/seek-to-engage.js",
+
         "libs/bubble-text.js",
         "libs/game-map.js",
+        "libs/interactive-top-down-layer.js",
         "libs/math-helper.js",
         "libs/top-down-layer.js",
-        "libs/interactive-top-down-layer.js",
-        "libs/interactive.js",
+        "libs/touch-debug-layer.js",
+
         "src/resource.js",
         "src/app.js"
     ]
