@@ -1,7 +1,9 @@
 var BasicAttack = function(props, attrs) {
-  this.prototype = Attack.prototype;  
-  Attack.call(this, props, attrs); 
+    Attack.call(this, props, attrs); 
 };
+
+BasicAttack.prototype = Object.create(Attack.prototype);
+BasicAttack.prototype.constructor = BasicAttack;
 
 BasicAttack.prototype.finishAttack = function(theAttack, victim) {
     //TODO: how do i pass this to modules?

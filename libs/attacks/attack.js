@@ -63,19 +63,19 @@ Attack.prototype.disengage = function(character, enemy) {
     this.owner.trigger('disengage', this, enemy);
 };
 
-Attack.prototype.prepareAttack: function(theAttack) {
-    theAttack.attackActive = true;
-    theAttack.attackCooldown = theAttack.stats.attackCooldown;
+Attack.prototype.prepareAttack = function() {
+    this.attackActive = true;
+    this.attackCooldown = this.stats.attackCooldown;
 };
 
-Attack.prototype.startAttack: function(theAttack) {
-    theAttack.attacking = true;
-    this.attackAnimationCooldown = theAttack.stats.attackAnimationCooldown;
+Attack.prototype.startAttack = function() {
+    this.attacking = true;
+    this.owner.attackAnimationCooldown = this.stats.attackAnimationCooldown;
 };
 
-Attack.prototype.finishAttack: function(theAttack, victim) {
-    theAttack.attackActive = false;
-    theAttack.attacking = false;
+Attack.prototype.finishAttack = function() {
+    this.attackActive = false;
+    this.attacking = false;
 
-    theAttack.attackCooldown = theAttack.stats.attackCooldown;
+    this.attackCooldown = this.stats.attackCooldown;
 };

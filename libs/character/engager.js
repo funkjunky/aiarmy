@@ -7,7 +7,7 @@ var Engager = Interactive.extend({
     ctor: function(resource, tags) {
         this._super(resource, tags);
 
-        this.id = _EngagerIncrement++;
+        this.id = _EngagerIncrementer++;
         tags.push('engager');
 
         this.scheduleUpdate();
@@ -15,15 +15,18 @@ var Engager = Interactive.extend({
 
     update: function(dt) {
         if(this.activeAttack && this.activeAttack.attacking)
-            if((this.attackAnimationCooldown -= dt) <= 0)
+            if((this.attackAnimationCooldown -= dt) <= 0) {
                 this.trigger('finishAttack', this.activeAttack.currentTarget);
+                this.activeAttack.finishAttack();
+            }
                 
         this.attacks.forEach(function(attack) {
             attack.update(dt);
         }, this);
         //Unique module. called on it's own.
         this.modules.forEach(function(module) {
-            module.update.call(this, dt);
+            if(module.update)
+                module.update.call(this, dt);
         }, this);
     },
 

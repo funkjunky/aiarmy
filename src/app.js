@@ -17,31 +17,27 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
         });
 
 //            BubbleText.quickPrint('Hello!', character, {panOffset: {x: 0, y: 64}});
-        thief.onTagEnter('monster', 64*10, function(monster, distance) {
+        thief.onFenceEnter('monster', 64*10, function(monster, distance) {
             BubbleText.quickPrint('Engard!!', enemy, {panOffset: {x: 0, y: 64}});
         });
 
-        thief.onTagEnter('monster', 64*10, function(monster, distance) {
-            BubbleText.quickPrint('Hiya!!', enemy, {panOffset: {x: 0, y: 64}});
-        });
-
-        thief.onTagExit('monster', 128, function(monster, distance) {
+        thief.onFenceExit('monster', 128, function(monster, distance) {
             BubbleText.quickPrint('alright then.', enemy, {panOffset: {x: 0, y: 64}});
         });
 
-        enemy.onSelect(function() {
+        monster.onSelect(function() {
             do {
                 randomLocation = {x: Math.random() * cc.winSize.width, y: Math.random() * cc.winSize.height};
             } while(!gameMap.move(enemy, randomLocation, 0.05)) //speed is seconds per tile
         }, true);
 
         this.onClick(function(touches, event) {
-            gameMap.move(character, touches[0].getLocation(), 0.1); //speed is seconds per tile
+            gameMap.move(thief, touches[0].getLocation(), 0.1); //speed is seconds per tile
         });
 
         this.addChild(this.gameMap.tiledMap);
-        this.addChild(character);
-        this.addChild(enemy);
+        this.addChild(thief);
+        this.addChild(monster);
 
         this.addOnHoverEffect();
 

@@ -1,6 +1,5 @@
-var SeekToEngageFirst = function() {
-    
+var SeekToEngageFirst = {
     engage: function(theAttack, enemy) {
         
-    };
+    },
 };

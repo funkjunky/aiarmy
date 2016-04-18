@@ -1,9 +1,9 @@
-var EngageClosest = function(this) {
+var EngageClosest = function(character) {
     var monstersInRange = [];
-    this.onFenceEnter('monster', 10, function(monster, distance) {
+    character.onFenceEnter('monster', 10, function(monster, distance) {
         monstersInRange.push(monster);
     });
-    this.onFenceExit('monster', 10, function(monster, distance) {
+    character.onFenceExit('monster', 10, function(monster, distance) {
         monstersInRange.splice(monstersInRange.indexOf(monster), 1);
     });
     return {

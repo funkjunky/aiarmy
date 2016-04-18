@@ -2,9 +2,6 @@ var Battler = Engager.extend({
     hp: 1,
     attacks: [],
     ctor: function(resource, tags) {
-        if(!hp)
-            this.error('Health not set for character.', this.id, this.tags, this);
-
         tags.push('battler');
         this._super(resource, tags);
     },

@@ -14,7 +14,7 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
             interactive.fenceEvents.forEach(function(event) {
                 var interactives = (event.interactive)
                     ?   [event.interactive]
-                    :   this.interactivesByTag[event.tag];
+                    :   this.interactivesByTag[event.tag] || [];
 
                 interactives.forEach(function(otherInteractive) {
                     if(interactive != otherInteractive)

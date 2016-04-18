@@ -26,7 +26,7 @@ var ModuleTemplate = function() {
             //In here, put anything you want to be done when we start to wait for the cooldown of an attack
             //Examples: charge up animation, Take bonus damage, set flag to reflect damage or speed up cast based on dmg
             //IDEA: a mage that gets bonuses for casting while taking damage! Tank mage!! (dark mage, aggression fuels him! [spell's range increasing based on damage? How cool would that be!])
-        }
+        },
         startAttack: function(theAttack) {
             //In here, put anything you want to be done when a sprite starts an attack
             //Examples: take dmg to start attack, mp loss, weakened state, invuln?
