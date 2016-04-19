@@ -7,7 +7,7 @@ var Engager = Interactive.extend({
     ctor: function(resource, tags) {
         this._super(resource, tags);
 
-        this.id = _EngagerIncrementer++;
+        this.id = ++_EngagerIncrementer;
         tags.push('engager');
 
         this.scheduleUpdate();

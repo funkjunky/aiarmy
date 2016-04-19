@@ -29,7 +29,6 @@ Attack.prototype.update = function(dt) {
     }
 
     if(!this.attacking && (this.attackCooldown -= dt) <= 0) {
-        console.log('start attack?');
         this.startAttack();
         this.owner.trigger('startAttack', this);
         return this.name;   //starting attack, set activeAttackName
@@ -46,10 +45,9 @@ Attack.prototype.updateTarget = function() {
 };
 
 Attack.prototype.engage = function(character, enemy) {
-    //console.log('engaging: ', character, enemy, enemy.id);
+    console.log('engaging: ', character, enemy, enemy.id);
     this.engagedEvents[enemy.id] = {
         enter: character.onFenceEnter(enemy, this.props.range, function(enemy, distance) {
-            //console.log('attack in range: ', this);
             this.inRange.push(enemy);
         }.bind(this)),
         exit: character.onFenceExit(enemy, this.props.range, function(enemy, distance) {

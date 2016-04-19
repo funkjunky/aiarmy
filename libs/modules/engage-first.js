@@ -1,7 +1,6 @@
 var EngageFirst = function(character) {
     var monstersInRange = [];
     character.onFenceEnter('monster', 20 * 32, function(monster, distance) {
-        console.log('monster in range!');
         monstersInRange.push(monster);
     });
     character.onFenceExit('monster', 20 * 32, function(monster, distance) {
