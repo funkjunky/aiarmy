@@ -6,7 +6,7 @@ var EngageFirst = function(character) {
     });
     character.onFenceExit('monster', 40 * 32, function(monster, distance) {
         console.log('removing monster...', monster.__instanceId);
-        monstersInRange.splice(nodeIndex(monstersInRange, monster), 1);
+        monstersInRange.splice(monstersInRange.indexOf(monster), 1);
     });
     return {
         update: function(dt) {

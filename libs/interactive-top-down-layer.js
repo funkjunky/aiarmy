@@ -26,38 +26,35 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
 
     //Called: when we check fence events and object isn't in the layer.
     removeInteractive: function(interactive) {
-        if(nodeIndex(this.interactives, interactive) == -1) //just in case this gets called twice in the same update.
+        if(this.interactives.indexOf(interactive) == -1) //just in case this gets called twice in the same update.
             return;
 
         console.log('removing interactive: ', interactive.tags);
-        this.interactives.splice(nodeIndex(this.interactives, interactive), 1);
+        this.interactives.splice(this.interactives.indexOf(interactive), 1);
         //Remove from each interactivesByTag
         interactive.tags.forEach(function(tag) {
-            this.interactivesByTag[tag].splice(nodeIndex(this.interactivesByTag[tag], interactive), 1);
+            this.interactivesByTag[tag].splice(this.interactivesByTag[tag].indexOf(interactive), 1);
         }, this);
     },
 
     checkEvent: function(event, subject, object) {
-        var objectIndex = nodeIndex(subject.eventsInteractivesInRange[event.id], object);
+        var objectIndex = subject.eventsInteractivesInRange[event.id].indexOf(object);
         var distance = MathHelper.dist(subject, object);
 
         var consideredInRange = objectIndex != -1; //object is "inRange" because it's in the array
         var inRange = distance <= event.range && object.parent != null; //object.parent checks whether the node exists anymore. If not call exit function.
 
         //if the object is no longer int he layer, then we need to remove it from fences.
-        if(!object.parent) {
+        if(!object.parent)
             this.removeInteractive(object);
-        }
 
         if(!(consideredInRange ^ inRange)) //if inRange state is valid, then no need to do anything.
             return;
 
-            console.log('inRange: ', inRange, object.__instanceId);
-
         if(inRange)
             subject.eventsInteractivesInRange[event.id].push(object);
         else
-            subject.eventsInteractivesInRange[event.id].splice(objectIndex);
+            subject.eventsInteractivesInRange[event.id].splice(objectIndex, 1);
 
         if(inRange && event.type == 'onEnter' || !inRange && event.type == 'onExit')
             event.cb(object, distance);
@@ -94,14 +91,4 @@ function objInArray(arr, obj) {
 
         return true;
     });
-}
-
-function nodeIndex(arr, node) {
-    return arr.findIndex(function(item) {
-        return nodesEqual(item, node);
-    });
-}
-
-function nodesEqual(a, b) {
-    return a.__instanceId === b.__instanceId;
 }

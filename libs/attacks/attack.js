@@ -58,7 +58,7 @@ Attack.prototype.engage = function(character, enemy) {
             this.inRange.push(enemy);
         }.bind(this)),
         exit: character.onFenceExit(enemy, this.props.range, function(enemy, distance) {
-            this.inRange.splice(nodeIndex(this.inRange, enemy), 1);
+            this.inRange.splice(this.inRange.indexOf(enemy), 1);
         }.bind(this)),
     };
 
