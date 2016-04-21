@@ -3,6 +3,7 @@ var Engager = Interactive.extend({
     id: -1, //TODO: check to see if sprites already had ids... I don't want to overwrite something they already had.
     attacks: null,
     activeAttack: null,
+    attackAnimationCooldown: null,
     modules: null,      //Note: don't put defaults here. ONLY in ctor. Otherwise shared.
     ctor: function(resource, tags) {
         this._super(resource, tags);
@@ -15,10 +16,11 @@ var Engager = Interactive.extend({
     },
 
     update: function(dt) {
+        LiveDebugger.set('animationcooldown' + this.__instanceId, this.__instanceId + ' animation: ' + (Math.round(this.attackAnimationCooldown * 100) / 100));
         if(this.activeAttack && this.activeAttack.attacking)
             if((this.attackAnimationCooldown -= dt) <= 0) {
-                this.trigger('finishAttack', this.activeAttack, this.activeAttack.currentTarget);
                 this.activeAttack.finishAttack();
+                this.trigger('finishAttack', this.activeAttack, this.activeAttack.currentTarget);
             }
                 
         this.attacks.forEach(function(attack) {
@@ -29,6 +31,18 @@ var Engager = Interactive.extend({
             if(module.update)
                 module.update.call(this, dt);
         }, this);
+    },
+
+    startAttack: function(theAttack) {
+        if(!this.activeAttack) {
+            theAttack.attacking = true;
+            this.attackAnimationCooldown = theAttack.props.attackAnimationCooldown;
+            this.activeAttack = theAttack;
+        }
+    },
+
+    finishAttack: function(theAttack) {
+        this.activeAttack = null;
     },
 
     considerTarget: function(currentTarget, consideredTarget, attack) {

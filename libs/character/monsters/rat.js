@@ -1,5 +1,5 @@
 var Rat = Monster.extend({
-    hp: 50,
+    hp: 30,
     exp: 5,
     ctor: function() {
         this._super(res.mouse, ['rat', 'beast']);
@@ -8,10 +8,11 @@ var Rat = Monster.extend({
                 attackCooldown: 2,
                 attackAnimationCooldown: 1,
             }, {
-                baseDamage: 1,
+                baseDamage: 2,
             }
         )];
 
         this.modules.push(AttacksBack());
+        this.modules.push(SeekToEngage());
     },
 });

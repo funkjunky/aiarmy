@@ -16,13 +16,18 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
             y: 500,
         });
 
+        var monster2 = this.createInteractive(Rat, {
+            x: 550,
+            y: 50,
+        });
+
 //            BubbleText.quickPrint('Hello!', character, {panOffset: {x: 0, y: 64}});
         thief.onFenceEnter('monster', 64*10, function(monster, distance) {
-            BubbleText.quickPrint('Engard!!', monster, {panOffset: {x: 0, y: 64}});
+            BubbleText.quickPrint('Engard!!', thief, {panOffset: {x: 0, y: 64}});
         });
 
         thief.onFenceExit('monster', 128, function(monster, distance) {
-            BubbleText.quickPrint('alright then.', enemy, {panOffset: {x: 0, y: 64}});
+            BubbleText.quickPrint('I just wanted hugs...', enemy, {panOffset: {x: 0, y: 64}});
         });
 
         monster.onSelect(function() {
@@ -38,6 +43,7 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
         this.addChild(this.gameMap.tiledMap);
         this.addChild(thief);
         this.addChild(monster);
+        this.addChild(monster2);
 
         this.addOnHoverEffect();
 

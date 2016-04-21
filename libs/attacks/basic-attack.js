@@ -10,3 +10,7 @@ BasicAttack.prototype.finishAttack = function() {
     this.currentTarget.trigger('takeAttack', {dmg: this.attrs.baseDamage}, this.owner)
     Attack.prototype.finishAttack.call(this);
 };
+
+BasicAttack.prototype.getDps = function() {
+    return this.attrs.baseDamage / (this.props.attackAnimationCooldown + this.props.attackCooldown);
+};

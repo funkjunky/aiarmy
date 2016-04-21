@@ -1,15 +1,22 @@
 var EngageFirst = function(character) {
     var monstersInRange = [];
-    character.onFenceEnter('monster', 20 * 32, function(monster, distance) {
+    character.onFenceEnter('monster', 40 * 32, function(monster, distance) {
+        console.log('adding monster...', monster.__instanceId);
         monstersInRange.push(monster);
     });
-    character.onFenceExit('monster', 20 * 32, function(monster, distance) {
-        monstersInRange.splice(monstersInRange.indexOf(monster), 1);
+    character.onFenceExit('monster', 40 * 32, function(monster, distance) {
+        console.log('removing monster...', monster.__instanceId);
+        monstersInRange.splice(nodeIndex(monstersInRange, monster), 1);
     });
     return {
         update: function(dt) {
             if(!monstersInRange.length)
                 return;
+
+            
+            LiveDebugger.set('monstersinrange', 'In Range: ' + monstersInRange.reduce(function(col, item) {
+                return item.__instanceId + ' ' + col;
+            }, ''));
 
             var firstMonster = monstersInRange[0]; //literally just the first monster in array. Super simple.
 

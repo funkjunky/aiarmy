@@ -5,6 +5,9 @@ var TopDownLayer = cc.Layer.extend({
     _stopPropagation: false,
     ctor: function() {
         this._super();
+
+        LiveDebugger.setLayer(this);
+        //LiveDebugger.set('test', 'HELLO WORLD');
     },
     onClick: function(cb) {
         cc.eventManager.addListener({

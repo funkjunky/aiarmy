@@ -12,6 +12,7 @@
     "modules" : ["cocos2d"],
 
     "jsList" : [
+        "libs/live-debugger.js",
         "libs/bubble-text.js",
         "libs/game-map.js",
         "libs/math-helper.js",

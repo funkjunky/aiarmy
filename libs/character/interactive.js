@@ -93,7 +93,7 @@ var Interactive = cc.Sprite.extend({
     setNewSeek: function() {
         var gameMap = _globals.gameMap;
         var oldAction = this.goingToAction;
-        this.goingToAction = gameMap.move(this, this.goingTo, 0.1);    //TODO: dont' hardcore speed. It should be on a lower level class I think? Not Interactive.
+        this.goingToAction = gameMap.move(this, this.goingTo, 0.3);    //TODO: dont' hardcore speed. It should be on a lower level class I think? Not Interactive.
         if(oldAction)
             this.stopAction(oldAction);
     },

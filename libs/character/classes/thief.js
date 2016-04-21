@@ -7,22 +7,22 @@ var Thief = Leveler.extend({
             new BasicAttack(this, {
                 range: 32 * 2,
                 attackCooldown: 1,
-                attackAnimationCooldown: 1,
+                attackAnimationCooldown: 0.1,
             }, {
-                baseDamage: 3,
+                baseDamage: 5,
             }),
             new BasicAttack(this, {
                 range: 32 * 6,
                 attackCooldown: 2,
-                attackAnimationCooldown: 2,
+                attackAnimationCooldown: 1,
             }, {
-                baseDamage: 2,
+                baseDamage: 8,
             }),
         ];
         this.modules.push(EngageFirst(this));
         this.modules.push(SeekToEngage());
         this.modules.push(MutuallyExclusiveAttacks(this.attacks, function comp(a, b) {
-            return (a.baseDamage > b.baseDamage) ? a : b;
+            return a.getDps() > b.getDps();
         }));
         this.modules.push(DoubleAttack(0.5));
     },

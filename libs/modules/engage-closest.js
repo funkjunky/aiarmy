@@ -4,7 +4,7 @@ var EngageClosest = function(character) {
         monstersInRange.push(monster);
     });
     character.onFenceExit('monster', 10, function(monster, distance) {
-        monstersInRange.splice(monstersInRange.indexOf(monster), 1);
+        monstersInRange.splice(nodeIndex(monstersInRange, monster), 1);
     });
     return {
         update: function(dt) {
