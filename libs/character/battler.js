@@ -16,6 +16,6 @@ var Battler = Engager.extend({
         }
     },
     defeated: function(enemy) {
-        this.removeFromParent();
+        this.removeAsInteractive();
     },
 });

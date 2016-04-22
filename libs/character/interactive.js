@@ -5,6 +5,7 @@ var Interactive = cc.Sprite.extend({
     goingToLastLoc: null,   //TODO: messy
     goingToAction: null,
     goingToTTL: 0,
+    onRemoveFncs: null,
     ctor: function(resource, tags) {
         this._super(resource);
 
@@ -13,6 +14,7 @@ var Interactive = cc.Sprite.extend({
         this.tags = [];
         this.selectEvents = [];
         this.fenceEvents = [];
+        this.onRemoveFncs = [];
 
         if(tags)
             this.tags = tags;
@@ -96,5 +98,17 @@ var Interactive = cc.Sprite.extend({
         this.goingToAction = gameMap.move(this, this.goingTo, 0.3);    //TODO: dont' hardcore speed. It should be on a lower level class I think? Not Interactive.
         if(oldAction)
             this.stopAction(oldAction);
+    },
+
+    removeAsInteractive: function() {
+        console.log('removing this from parent.' + this.__instanceId);
+        this.onRemoveFncs.forEach(function(fnc) {
+            fnc(this);
+        }, this);
+        this.removeFromParent();
+    },
+
+    onRemove: function(cb) {
+        this.onRemoveFncs.push(cb);
     },
 });

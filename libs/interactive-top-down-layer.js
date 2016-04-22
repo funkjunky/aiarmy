@@ -9,7 +9,7 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
     update: function(dt) {
         this.handleInteractions();
     },
-    handleInteractions: function() {
+    handleInteractions: function(interactiveExiting) {
         this.interactives.forEach(function(interactive) {
             interactive.fenceEvents.forEach(function(event) {
                 var interactives = (event.interactive)
@@ -18,7 +18,7 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
 
                 interactives.reduceRight(function(col, otherInteractive) { //reduceRight, because i splice in checkEvent.
                     if(interactive != otherInteractive)
-                        this.checkEvent(event, interactive, otherInteractive);
+                        this.checkEvent(event, interactive, otherInteractive, interactiveExiting == otherInteractive || interactiveExiting == interactive);
                 }.bind(this), true);
             }, this);
         }, this);
@@ -29,24 +29,24 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
         if(this.interactives.indexOf(interactive) == -1) //just in case this gets called twice in the same update.
             return;
 
-        console.log('removing interactive: ', interactive.tags);
+        console.log('handling final interactions...' + interactive.__instanceId);
+        //first call handleInteractions with the object to assume out of range, so we exit all events
+        this.handleInteractions(interactive);
+        console.log('done handling final interactions!');
+
+        //then we remove the interactive from everywhere.
         this.interactives.splice(this.interactives.indexOf(interactive), 1);
-        //Remove from each interactivesByTag
         interactive.tags.forEach(function(tag) {
             this.interactivesByTag[tag].splice(this.interactivesByTag[tag].indexOf(interactive), 1);
         }, this);
     },
 
-    checkEvent: function(event, subject, object) {
+    checkEvent: function(event, subject, object, assumeOutOfRange) {
         var objectIndex = subject.eventsInteractivesInRange[event.id].indexOf(object);
         var distance = MathHelper.dist(subject, object);
 
         var consideredInRange = objectIndex != -1; //object is "inRange" because it's in the array
-        var inRange = distance <= event.range && object.parent != null; //object.parent checks whether the node exists anymore. If not call exit function.
-
-        //if the object is no longer int he layer, then we need to remove it from fences.
-        if(!object.parent)
-            this.removeInteractive(object);
+        var inRange = distance <= event.range && !assumeOutOfRange;
 
         if(!(consideredInRange ^ inRange)) //if inRange state is valid, then no need to do anything.
             return;
@@ -78,6 +78,10 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
 
         if(location)
             interactive.attr(this.gameMap.getScreenTileCoords(location));
+
+        interactive.onRemove(function(character) {
+            this.removeInteractive(character);
+        }.bind(this));
 
         return interactive;
     }, 

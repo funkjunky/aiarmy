@@ -1,13 +1,13 @@
 var EngageFirst = function(character) {
     var monstersInRange = [];
-    character.onFenceEnter('monster', 40 * 32, function(monster, distance) {
+    console.log('engage enter: ', character.onFenceEnter('monster', 40 * 32, function(monster, distance) {
         console.log('adding monster...', monster.__instanceId);
         monstersInRange.push(monster);
-    });
-    character.onFenceExit('monster', 40 * 32, function(monster, distance) {
+    }));
+    console.log('engage exit: ', character.onFenceExit('monster', 40 * 32, function(monster, distance) {
         console.log('removing monster...', monster.__instanceId);
         monstersInRange.splice(monstersInRange.indexOf(monster), 1);
-    });
+    }));
     return {
         update: function(dt) {
             if(!monstersInRange.length)

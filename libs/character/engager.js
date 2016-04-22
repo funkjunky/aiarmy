@@ -16,7 +16,8 @@ var Engager = Interactive.extend({
     },
 
     update: function(dt) {
-        LiveDebugger.set('animationcooldown' + this.__instanceId, this.__instanceId + ' animation: ' + (Math.round(this.attackAnimationCooldown * 100) / 100));
+        if(this.tags.indexOf('leveler') != -1)
+            LiveDebugger.set('animationcooldown' + this.__instanceId, this.__instanceId + ' animation: ' + (Math.round(this.attackAnimationCooldown * 100) / 100));
         if(this.activeAttack && this.activeAttack.attacking)
             if((this.attackAnimationCooldown -= dt) <= 0) {
                 this.activeAttack.finishAttack();
@@ -31,6 +32,9 @@ var Engager = Interactive.extend({
             if(module.update)
                 module.update.call(this, dt);
         }, this);
+    },
+
+    cancelAttack: function() {
     },
 
     startAttack: function(theAttack) {
@@ -56,9 +60,9 @@ var Engager = Interactive.extend({
             return found;
         //default is to attack the closest target
         if(MathHelper.dist(currentTarget, this) < MathHelper.dist(consideredTarget, this))
-            return enemy;
-        else
             return currentTarget;
+        else
+            return consideredTarget;
     },
 
     takeAttack: function(attack, attacker) {

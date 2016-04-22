@@ -21,13 +21,32 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
             y: 50,
         });
 
+        var self = this;
+        var respawnAfterDeath = function() {
+            setTimeout(function() {
+                var max = 18 * 32;
+                var margins = 32;
+                
+                var newMonster = self.createInteractive(Rat, {
+                    x: Math.random() * (max - (margins * 2)) + margins,
+                    y: Math.random() * (max - (margins * 2)) + margins,
+                });
+                console.log('added new rat: ', newMonster);
+                newMonster.onRemove(respawnAfterDeath);
+                self.addChild(newMonster);
+            }, 2000);
+        };
+
+        monster.onRemove(respawnAfterDeath);
+        monster2.onRemove(respawnAfterDeath);
+
 //            BubbleText.quickPrint('Hello!', character, {panOffset: {x: 0, y: 64}});
         thief.onFenceEnter('monster', 64*10, function(monster, distance) {
             BubbleText.quickPrint('Engard!!', thief, {panOffset: {x: 0, y: 64}});
         });
 
         thief.onFenceExit('monster', 128, function(monster, distance) {
-            BubbleText.quickPrint('I just wanted hugs...', enemy, {panOffset: {x: 0, y: 64}});
+            BubbleText.quickPrint('I just wanted hugs...', monster, {panOffset: {x: 0, y: 64}});
         });
 
         monster.onSelect(function() {
