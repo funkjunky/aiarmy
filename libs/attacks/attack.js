@@ -10,7 +10,7 @@ var Attack = function(owner, props, attrs) {
     this.engagedEvents = {};
 
     this.idle = true;
-    this.attackActive = false;
+    this.preparing = false;
     this.attacking = false;
     this.attackCooldown = this.props.attackCooldown;
 
@@ -23,18 +23,18 @@ Attack.prototype.update = function(dt) {
     if(this.inRange.length <= 0) {
         //this.resetAttackAnimation();
         LiveDebugger.set('attack' + this.attrs.baseDamage, this.attrs.baseDamage + ': OFF');
-        if(this.attackActive || this.attacking)
+        if(this.preparing || this.attacking)
             this.cancelAttack();
         return;
     }
-    LiveDebugger.set('attack' + this.attrs.baseDamage, this.attrs.baseDamage + ': ' + this.idle + ' -> ' + this.attackActive + ' -> ' + this.attacking + '| cd: ' + (Math.round(this.attackCooldown * 100) / 100) + '--inrange: ' + this.inRange[0].__instanceId);
+    LiveDebugger.set('attack' + this.attrs.baseDamage, this.attrs.baseDamage + ': ' + this.idle + ' -> ' + this.preparing + ' -> ' + this.attacking + '| cd: ' + (Math.round(this.attackCooldown * 100) / 100) + '--inrange: ' + this.inRange[0].__instanceId);
 
     this.updateTarget();
     if(this.idle) {
         this.prepareAttack();
     }
 
-    if(this.attackActive && !this.attacking && (this.attackCooldown -= dt) <= 0)
+    if(this.preparing && !this.attacking && (this.attackCooldown -= dt) <= 0)
         this.owner.startAttack(this);
 };
 
@@ -84,7 +84,7 @@ Attack.prototype.resetAttackAnimation = function() {
 
 Attack.prototype.cancelAttack = function() {
     this.attacking = false;
-    this.attackActive = false;
+    this.preparing = false;
     this.idle = true;
     console.log(this.attrs.baseDamage + ' attack canceled.');
 };
@@ -109,7 +109,7 @@ Attack.prototype.prepareAttack = function() {
         return false;
 
     this.idle = false;
-    this.attackActive = true;
+    this.preparing = true;
     this.attackCooldown = this.props.attackCooldown;
 };
 
@@ -122,7 +122,7 @@ Attack.prototype.targetIsValid = function() {
 };
 
 Attack.prototype.finishAttack = function() {
-    this.attackActive = false;
+    this.preparing = false;
     this.attacking = false;
     this.idle = true;
 };
