@@ -2,7 +2,7 @@ var _EngagerIncrementer = 0;
 var Engager = Interactive.extend({
     id: -1, //TODO: check to see if sprites already had ids... I don't want to overwrite something they already had.
     attacks: null,
-    activeAttack: null,
+    startedAttack: null,
     attackAnimationCooldown: null,
     modules: null,      //Note: don't put defaults here. ONLY in ctor. Otherwise shared.
     ctor: function(resource, tags) {
@@ -18,10 +18,13 @@ var Engager = Interactive.extend({
     update: function(dt) {
         if(this.tags.indexOf('leveler') != -1)
             LiveDebugger.set('animationcooldown' + this.__instanceId, this.__instanceId + ' animation: ' + (Math.round(this.attackAnimationCooldown * 100) / 100));
-        if(this.activeAttack && this.activeAttack.attacking)
+        if(this.startedAttack && this.startedAttack.attacking)
             if((this.attackAnimationCooldown -= dt) <= 0) {
-                this.activeAttack.finishAttack();
-                this.trigger('finishAttack', this.activeAttack, this.activeAttack.currentTarget);
+                var finishedAttack = this.startedAttack;
+                var attackedTarget = this.startedAttack.currentTarget;
+                this.startedAttack.finishAttack();
+                this.finishAttack();
+                this.trigger('doneAttack', finishedAttack, attackedTarget);
             }
                 
         this.attacks.forEach(function(attack) {
@@ -34,19 +37,25 @@ var Engager = Interactive.extend({
         }, this);
     },
 
-    cancelAttack: function() {
+    canPrepareAttack: function(theAttack) {
+        return this.trigger('canPrepareAttack', theAttack);
+    },
+
+    canStartAttack: function(theAttack) {
+        console.log('canstart: ', !this.startedAttack, theAttack.canStartAttack(), this.trigger('canStartAttack', theAttack));
+        return !this.startedAttack && theAttack.canStartAttack() && this.trigger('canStartAttack', theAttack);
     },
 
     startAttack: function(theAttack) {
-        if(!this.activeAttack) {
+        if(this.canStartAttack(theAttack)) {
             theAttack.attacking = true;
             this.attackAnimationCooldown = theAttack.props.attackAnimationCooldown;
-            this.activeAttack = theAttack;
+            this.startedAttack = theAttack;
         }
     },
 
-    finishAttack: function(theAttack) {
-        this.activeAttack = null;
+    finishAttack: function() {
+        this.startedAttack = null;
     },
 
     considerTarget: function(currentTarget, consideredTarget, attack) {
@@ -72,12 +81,11 @@ var Engager = Interactive.extend({
     trigger: function(moduleEvent) {
         var args = Array.prototype.slice.call(arguments, 1);
 
-        if(this[moduleEvent])
-            this[moduleEvent].apply(this, args);
-
-        this.modules.forEach(function(module) {
+        return this.modules.every(function(module) {
             if(module[moduleEvent])
-                module[moduleEvent].apply(this, args); 
+                return module[moduleEvent].apply(this, args); 
+            else
+                return true;
         }, this);
     },
 });
