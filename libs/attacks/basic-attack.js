@@ -7,6 +7,7 @@ BasicAttack.prototype = Object.create(Attack.prototype);
 BasicAttack.prototype.constructor = BasicAttack;
 
 BasicAttack.prototype.finishAttack = function() {
+    this.currentTarget.takeAttack({dmg: this.attrs.baseDamage}, this.owner);
     this.currentTarget.trigger('takeAttack', {dmg: this.attrs.baseDamage}, this.owner)
     Attack.prototype.finishAttack.call(this);
 };

@@ -6,32 +6,36 @@ var MutuallyExclusiveAttacks = function(attacks, comp) {
             return a;
         };
     return {
-        prepareAttack: function(theAttack) {
-            if(activeAttack == theAttack)
-                return;
-
-            if(activeAttack && comp(activeAttack, theAttack)) //if another activeAttack and not stronger, then turn off
-            {
-                theAttack.attacking = false;
-                theAttack.attackActive = false;
-                theAttack.idle = true;
+        canPrepareAttack: function(theAttack) {
+            if(activeAttack && activeAttack.inRange.length == 0) {
+                activeAttack = null;
+                //TODO: I don't want to have this code...I should check if it ever happens, then remove it if it doesn't.
+                if(theAttack.inRange.length == 0)
+                    return false;
             }
-            else if(theAttack.inRange.length && (!activeAttack || !activeAttack.attacking)) { //as long as we aren't in the middle of an attack
-                if(activeAttack) {
-                    activeAttack.attackActive = false;  //deactive the crappier attack, so the cooldown stops
-                    activeAttack.idle = true;
-                }
 
-                LiveDebugger.set('activeattack', 'ACTIVE: ' + theAttack.attrs.baseDamage);
+            if(!activeAttack) { //there was no activeAttack yet, then set this and continue.
+                activeAttack = theAttack;
+                LiveDebugger.set('activeattack', '~ Active Attack: ' + activeAttack.attrs.baseDamage);
+            }
+
+            if(activeAttack == theAttack) //if this is the active attack already, then continue.
+                return true;
+
+            if(activeAttack.attacking) //if we are animating an attack, then we must follow-through and we can't do this attack.
+                return false;
+
+            var theAttackIsBetter = comp(theAttack, activeAttack);
+
+            if(theAttackIsBetter) { //if this attack is better than the other attack
+                LiveDebugger.set('activeattack', '* Active Attack: ' + activeAttack.attrs.baseDamage);
+                activeAttack.cancelAttack();
                 activeAttack = theAttack;
             }
-        },
-        finishAttack: function(theAttack) {
-            //TODO: this is specifically for double attack... this kind of coupling is bad...
-            if(!activeAttack.attacking) {
-                activeAttack = null;
-                LiveDebugger.set('activeattack', 'ACTIVE: null');
-            }
+
+            LiveDebugger.set('activeattack', 'Active Attack: ' + activeAttack.attrs.baseDamage);
+            
+            return theAttackIsBetter;
         },
     };
 };

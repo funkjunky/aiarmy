@@ -3,12 +3,13 @@ var SeekToEngage = function() {
         engage: function(theAttack, enemy) {
             this.seek(enemy);
         },
-        prepareAttack: function(theAttack) {
+        canPrepareAttack: function(theAttack) {
             if(this.goingToAction && !this.goingToAction.isDone()) {
                 this.stopAction(this.goingToAction);
                 this.goingToAction = null;
                 this.goingTo = null;
             }
+            return true;
         },
     };
 };

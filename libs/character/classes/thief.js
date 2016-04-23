@@ -23,6 +23,7 @@ var Thief = Leveler.extend({
         this.modules.push(SeekToEngage());
         this.modules.push(DoubleAttack(0.5));
         this.modules.push(MutuallyExclusiveAttacks(this.attacks, function comp(a, b) {
+            console.log('dps: ', a.getDps(), b.getDps());
             return a.getDps() > b.getDps();
         }));
     },
