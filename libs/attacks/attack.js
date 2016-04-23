@@ -84,7 +84,7 @@ Attack.prototype.resetAttackAnimation = function() {
 
 Attack.prototype.cancelAttack = function() {
     this.attacking = false;
-    this.activeAttack = false;
+    this.attackActive = false;
     this.idle = true;
     console.log(this.attrs.baseDamage + ' attack canceled.');
 };
