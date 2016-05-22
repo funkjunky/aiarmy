@@ -2,7 +2,9 @@ var Slime = Monster.extend({
     hp: 30,
     exp: 5,
     ctor: function() {
-        this._super(res.mouse, ['rat', 'beast']);
+        this._super(null, ['slime', 'liquid']);
+        var spriteframe = cc.spriteFrameCache.getSpriteFrame('slime/slime.png');
+        this.initWithSpriteFrame(spriteframe);
         this.attacks = [new BasicAttack(this, {
                 range: 32 * 2,
                 attackCooldown: 2,

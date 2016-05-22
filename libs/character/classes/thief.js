@@ -1,6 +1,8 @@
 var Thief = Leveler.extend({
     ctor: function(level) {
-        this._super(res.jane, ['thief'], level); //TODO: need a better resource manager than 'res'
+        this._super(null, ['thief'], level); //TODO: need a better resource manager than 'res'
+        var spriteframe = cc.spriteFrameCache.getSpriteFrame('thief/thief.png');
+        this.initWithSpriteFrame(spriteframe);
         this.hp = 200;
 
         this.attacks = [
@@ -23,7 +25,7 @@ var Thief = Leveler.extend({
         this.modules.push(SeekToEngage());
         this.modules.push(DoubleAttack(0.5));
         this.modules.push(MutuallyExclusiveAttacks(this.attacks, function comp(a, b) {
-            console.log('dps: ', a.getDps(), b.getDps());
+            //console.log('dps: ', a.getDps(), b.getDps());
             return a.getDps() > b.getDps();
         }));
     },

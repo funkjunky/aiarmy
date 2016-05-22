@@ -42,7 +42,7 @@ var Engager = Interactive.extend({
     },
 
     canStartAttack: function(theAttack) {
-        console.log('canstart: ', !this.startedAttack, theAttack.canStartAttack(), this.trigger('canStartAttack', theAttack));
+        //console.log('canstart: ', !this.startedAttack, theAttack.canStartAttack(), this.trigger('canStartAttack', theAttack));
         return !this.startedAttack && theAttack.canStartAttack() && this.trigger('canStartAttack', theAttack);
     },
 

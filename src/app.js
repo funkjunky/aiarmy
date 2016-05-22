@@ -3,6 +3,12 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
     ctor:function () {
         this._super();
 
+        //TODO: where should i put this strange global cache thing?
+        _globals.spriteCache = cc.spriteFrameCache;
+        console.log('cache: ', cc.spriteFrameCache);
+        cc.spriteFrameCache.addSpriteFrames(res.thief);
+        cc.spriteFrameCache.addSpriteFrames(res.slime);
+
         var gameMap = this.gameMap = new GameMap(new cc.TMXTiledMap(res.smallMap), "obstructions");
         _globals.gameMap = gameMap;
 

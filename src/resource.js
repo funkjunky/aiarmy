@@ -6,6 +6,8 @@ var res = {
     jane: 'res/jane.png',
     mouse: 'res/mouse.png',
     cursor: 'res/cursor.png',
+    slime: 'res/slime.plist',
+    thief: 'res/thief.plist',
 };
 
 var g_resources = [];
