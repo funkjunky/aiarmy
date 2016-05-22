@@ -1,4 +1,4 @@
-var Rat = Monster.extend({
+var Slime = Monster.extend({
     hp: 30,
     exp: 5,
     ctor: function() {

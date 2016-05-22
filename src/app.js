@@ -11,12 +11,12 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
             y: cc.winSize.height / 2,
         });
 
-        var monster = this.createInteractive(Rat, {
+        var monster = this.createInteractive(Slime, {
             x: 150,
             y: 500,
         });
 
-        var monster2 = this.createInteractive(Rat, {
+        var monster2 = this.createInteractive(Slime, {
             x: 550,
             y: 50,
         });
@@ -27,7 +27,7 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
                 var max = 18 * 32;
                 var margins = 32;
                 
-                var newMonster = self.createInteractive(Rat, {
+                var newMonster = self.createInteractive(Slime, {
                     x: Math.random() * (max - (margins * 2)) + margins,
                     y: Math.random() * (max - (margins * 2)) + margins,
                 });
