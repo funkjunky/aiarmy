@@ -42,9 +42,10 @@
 
                 "libs/character/classes/thief.js",
 
-                "libs/character/monsters/rat.js",
+                "libs/character/monsters/slime.js",
 
         "src/resource.js",
+        "src/animations.js",
         "src/app.js"
     ]
 }

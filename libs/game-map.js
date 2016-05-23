@@ -14,16 +14,86 @@ GameMap.prototype.move = function(character, loc, speed) {
     var path = this.getAStar(this.getCoords(character), this.getCoords(loc));
     if(!path.length)
         return null;
-    var last = path.splice(0,1)[0];   //remove the starting point from the path.
-    var moves = path.map(function(point, index) {
-        var duration = speed * MathHelper.dist(point, last);
-        last = path[index];
-        return cc.MoveTo.create(duration, this.adjustedScreenCoords(point));
-    }.bind(this));
+
+    //setup all the things
+    var moves = [];
+    var orientations = [];
+    var animations = [];
+
+    var lastPoint = path.splice(0,1)[0];   //remove the starting point from the path.
+    var lastOrientation = character.orientation;
+    var durationCarryOver = 0;
+    path.forEach(function(point, index) {
+        //calculate duration for movement and duration
+        var duration = speed * MathHelper.dist(point, lastPoint);
+
+        //push move
+        moves.push(cc.MoveTo.create(duration, this.adjustedScreenCoords(point)));
+
+        var orientation = getOrientation(point, lastPoint, lastOrientation);
+        if(orientation == lastOrientation)
+            durationCarryOver += duration;
+        else {
+            //push animation
+            //First iteration we only bank.
+            if(durationCarryOver) {
+                //TODO: make a left animation. I guess we'll do the flipping outselves as extras.
+                var adjustedOrientation = (lastOrientation == 'left')?'right':lastOrientation;
+                //TODO: animation needs to run until we switch orientations, currently we run it once. Also below.
+                //TODO: don't hardcode the speed of the walk...
+                var frames = (Animations.frames[character.name].walking.all)
+                    ? Animations.frames[character.name].walking.all
+                    : Animations.frames[character.name].walking[adjustedOrientation];
+                //console.log('frames: ', frames);
+                animations.push(Animations.getAnimation(frames, 0.5, duration + durationCarryOver));
+            }
+
+            //push orientation
+            orientations = orientations.concat([cc.DelayTime.create(durationCarryOver), cc.CallFunc.create(function(newOrientation) {
+                this.orientation = newOrientation;
+            }.bind(character, orientation))]);
+            durationCarryOver = duration;
+        }
+        
+        lastOrientation = orientation;
+        lastPoint = point;
+    }, this);
+    //because animations is always lagged by one iteration. (so if orientation doesn't change we keep building up the move animation duration)
+    //TODO: way too much code duplication... also this is getting crazy complicated... too much code.
+    var frames = (Animations.frames[character.name].walking.all)
+        ? Animations.frames[character.name].walking.all
+        : Animations.frames[character.name].walking[lastOrientation];
+    //console.log('last frames: ', frames, character.name, lastOrientation);
+    animations.push(Animations.getAnimation(frames, 0.5, 1));
+
     //NOTE: sequence gobbles up the move. So moves well be empty after giving it to sequence.
     character.aMoveAction = cc.sequence(moves);
+
+    if(orientations.length)
+        character.runAction(cc.sequence(orientations));
+    character.runAction(cc.sequence(animations));
     return character.runAction(character.aMoveAction);
 };
+
+function getOrientation(point, lastPoint, lastOrientation) {
+    var deltax = point.x - lastPoint.x;
+    var deltay = point.y - lastPoint.y;
+
+    //Note: this is complicated because if we were going up, and now we're going up-left, then there is no point switchin to left... just keep doing up
+    var orientation;
+    if(deltax > 0 && (deltay == 0 || lastOrientation == 'right' || lastOrientation == 'left'))
+        orientation = 'right';
+    else if(deltax < 0 && (deltay == 0 || lastOrientation == 'right' || lastOrientation == 'left'))
+        orientation = 'left';
+    else if(deltay > 0 && (deltax == 0 || lastOrientation == 'down' || lastOrientation == 'up'))
+        orientation = 'up';
+    else if(deltay < 0 && (deltax == 0 || lastOrientation == 'up' || lastOrientation == 'down'))
+        orientation = 'down';
+    else
+        throw "orientation code screwed up... this shouldn't happen";
+
+    return orientation;
+}
 
 GameMap.prototype.getCoords = function(screenLoc) {
     return {

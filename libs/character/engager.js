@@ -42,7 +42,7 @@ var Engager = Interactive.extend({
     },
 
     canStartAttack: function(theAttack) {
-        console.log('canstart: ', !this.startedAttack, theAttack.canStartAttack(), this.trigger('canStartAttack', theAttack));
+        //console.log('canstart: ', !this.startedAttack, theAttack.canStartAttack(), this.trigger('canStartAttack', theAttack));
         return !this.startedAttack && theAttack.canStartAttack() && this.trigger('canStartAttack', theAttack);
     },
 
@@ -51,7 +51,18 @@ var Engager = Interactive.extend({
             theAttack.attacking = true;
             this.attackAnimationCooldown = theAttack.props.attackAnimationCooldown;
             this.startedAttack = theAttack;
+            this.startAttackAnimation(theAttack);
         }
+    },
+
+    //TODO: move this somewhere else for graphics... this is in between all the game logic functions...
+    startAttackAnimation: function(theAttack) {
+        var frames = Animations.frames[this.name].attacking;
+        console.log('frames: ', frames, this.orientation);
+        if(frames.all)
+            this.runAction(Animations.getAnimation(frames.all, theAttack.props.attackAnimationCooldown, 1));
+        else
+            this.runAction(Animations.getAnimation(frames[this.orientation], theAttack.props.attackAnimationCooldown, 1));
     },
 
     finishAttack: function() {

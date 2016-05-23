@@ -6,3 +6,4 @@ simulator/
 CMakeLists.txt
 index.html
 main.js
+raw*
