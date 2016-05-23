@@ -45,6 +45,7 @@
                 "libs/character/monsters/slime.js",
 
         "src/resource.js",
+        "src/animations.js",
         "src/app.js"
     ]
 }

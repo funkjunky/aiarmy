@@ -1,5 +1,6 @@
 var eventIncrement = 0;
 var Interactive = cc.Sprite.extend({
+    orientation: 'down',
     eventsInteractivesInRange: {},
     goingTo: null,      //TODO: move these into their own object.
     goingToLastLoc: null,   //TODO: messy

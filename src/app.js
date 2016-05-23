@@ -5,7 +5,6 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
 
         //TODO: where should i put this strange global cache thing?
         _globals.spriteCache = cc.spriteFrameCache;
-        console.log('cache: ', cc.spriteFrameCache);
         cc.spriteFrameCache.addSpriteFrames(res.thief);
         cc.spriteFrameCache.addSpriteFrames(res.slime);
 
