@@ -8,7 +8,6 @@ var Battler = Engager.extend({
         this.takeDamage(attack.dmg, attacker);
     },
     takeDamage: function(dmg, attacker) {
-        console.log('TAKE ATTACK!!!!');
         BubbleText.quickPrint(dmg, this, {panOffset: {x: 0, y: 64}});
         this.hp -= dmg;
         if(this.hp <= 0) {

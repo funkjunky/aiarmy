@@ -1,5 +1,6 @@
 var eventIncrement = 0;
 var Interactive = cc.Sprite.extend({
+    orientation: 'down',
     eventsInteractivesInRange: {},
     goingTo: null,      //TODO: move these into their own object.
     goingToLastLoc: null,   //TODO: messy
@@ -87,7 +88,7 @@ var Interactive = cc.Sprite.extend({
 
     //TODO: I shouldn't use actions for seeking. This one is very dynamic. I should simply use update and move myself? maybe move from tile to tile during update?
     seek: function(object) {
-        console.log('object: ', object);
+        //console.log('object: ', object);
         this.goingTo = object;
         this.setNewSeek();
     },
@@ -101,7 +102,7 @@ var Interactive = cc.Sprite.extend({
     },
 
     removeAsInteractive: function() {
-        console.log('removing this from parent.' + this.__instanceId);
+        //console.log('removing this from parent.' + this.__instanceId);
         this.onRemoveFncs.forEach(function(fnc) {
             fnc(this);
         }, this);
