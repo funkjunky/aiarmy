@@ -52,6 +52,13 @@ var Engager = Interactive.extend({
             this.attackAnimationCooldown = theAttack.props.attackAnimationCooldown;
             this.startedAttack = theAttack;
             this.startAttackAnimation(theAttack);
+            //TODO: the sound effect should play at 'finishAttack'
+            if(this.name == 'slime')
+                setTimeout(function() {
+                    cc.audioEngine.playEffect(res[this.name + '_sfx']);
+                }.bind(this), 800);
+            else
+                cc.audioEngine.playEffect(res[this.name + '_sfx']);
         }
     },
 

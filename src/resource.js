@@ -8,6 +8,9 @@ var res = {
     cursor: 'res/cursor.png',
     slime: 'res/slime.plist',
     thief: 'res/thief.plist',
+    slime_sfx: 'res/sfx/slime-attack.wav',
+    thief_sfx: 'res/sfx/thief-attack.wav',
+    bg_music: 'res/bgmusic.mp3',
 };
 
 var g_resources = [];
