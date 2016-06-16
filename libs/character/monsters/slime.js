@@ -1,11 +1,12 @@
 var Slime = Monster.extend({
-    hp: 30,
     exp: 5,
     name: 'slime',
     ctor: function() {
         this._super(null, ['slime', 'liquid']);
         var spriteframe = cc.spriteFrameCache.getSpriteFrame('slime.png');
         this.initWithSpriteFrame(spriteframe);
+
+        this.maxHp = this.hp = 30;
 
         this.speed = 192; //pixels per second
 

@@ -4,7 +4,7 @@ var Thief = Leveler.extend({
         this._super(null, ['thief'], level); //TODO: need a better resource manager than 'res'
         var spriteframe = cc.spriteFrameCache.getSpriteFrame('thief.png');
         this.initWithSpriteFrame(spriteframe);
-        this.hp = 200;
+        this.maxHp = this.hp = 200;
 
         this.speed = 320;   //travels this.speed pixels per second
 
