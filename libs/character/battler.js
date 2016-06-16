@@ -6,18 +6,18 @@ var Battler = Engager.extend({
     },
     takeAttack: function(attack, attacker) {
         this.takeDamage(attack.dmg, attacker);
+        Event.trigger('attackTaken', this, {attacker: attacker});
     },
     takeDamage: function(dmg, attacker) {
         BubbleText.quickPrint(dmg, this, {panOffset: {x: 0, y: 64}});
         this.hp -= dmg;
         if(this.hp <= 0) {
             this.defeated(attacker);
-            attacker.trigger('enemyDefeated', this);
+            Event.trigger('enemyDefeated', attacker, {victim: this});
         }
-        this.trigger('takeDamage', dmg, attacker);
     },
     defeated: function(enemy) {
         this.removeAsInteractive();
-        this.trigger('defeated', enemy);
+        Event.trigger('defeated', enemy, {attacker: enemy});
     },
 });

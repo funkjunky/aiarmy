@@ -1,7 +1,9 @@
 var _globals = {};
-var HelloWorldLayer = InteractiveTopDownLayer.extend({
+var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
+    customEvents: {onCreateAttackable: []},
     ctor:function () {
         this._super();
+        _globals.game = this;
 
         //TODO: where should i put this strange global cache thing?
         _globals.spriteCache = cc.spriteFrameCache;
@@ -60,7 +62,7 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
                 if(attack.currentTarget)
                     attack.disengage(thief, attack.currentTarget);
             });
-            gameMap.move(thief, touches[0].getLocation(), 0.1); //speed is seconds per tile
+            gameMap.move(thief, touches[0].getLocation(), thief.speed); //speed is seconds per tile
             console.log('point', MathHelper.isPointInsideRect(touches[0], monster), touches[0]);
         });
 
@@ -93,6 +95,7 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
     },
     createAttackable: function(Character, location, thief) {
         var attackableCharacter = this.createInteractive(Character, location);
+        /*
         attackableCharacter.onSelect(function() {
             thief.attacks.forEach(function(attack) {
                 if(attack.currentTarget)
@@ -102,7 +105,12 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
                 attack.engage(thief, attackableCharacter);
             });
         }, true);
+        */
+        this.customEvents.onCreateAttackable.forEach(function(cb) { cb(attackableCharacter) }); 
         return attackableCharacter;
+    },
+    onCreateAttackable: function(cb) {
+        this.customEvents.onCreateAttackable.push(cb);
     },
 });
 

@@ -2,13 +2,13 @@ var _EngagerIncrementer = 0;
 var Engager = Interactive.extend({
     id: -1, //TODO: check to see if sprites already had ids... I don't want to overwrite something they already had.
     attacks: null,
-    startedAttack: null,
-    attackAnimationCooldown: null,
+
     modules: null,      //Note: don't put defaults here. ONLY in ctor. Otherwise shared.
     ctor: function(resource, tags) {
         this._super(resource, tags);
 
         this.id = ++_EngagerIncrementer;
+        this.attacks = [];
         tags.push('engager');
 
         this.scheduleUpdate();
@@ -16,20 +16,10 @@ var Engager = Interactive.extend({
     },
 
     update: function(dt) {
-        if(this.tags.indexOf('leveler') != -1)
-            LiveDebugger.set('animationcooldown' + this.__instanceId, this.__instanceId + ' animation: ' + (Math.round(this.attackAnimationCooldown * 100) / 100));
-        if(this.startedAttack && this.startedAttack.attacking)
-            if((this.attackAnimationCooldown -= dt) <= 0) {
-                var finishedAttack = this.startedAttack;
-                var attackedTarget = this.startedAttack.currentTarget;
-                this.startedAttack.finishAttack();
-                this.finishAttack();
-                this.trigger('doneAttack', finishedAttack, attackedTarget);
-            }
-                
         this.attacks.forEach(function(attack) {
             attack.update(dt);
         }, this);
+
         //Unique module. called on it's own.
         this.modules.forEach(function(module) {
             if(module.update)
@@ -37,73 +27,50 @@ var Engager = Interactive.extend({
         }, this);
     },
 
-    canPrepareAttack: function(theAttack) {
-        return this.trigger('canPrepareAttack', theAttack);
-    },
+    startAttack: function(attackInstance, target) {
+        //console.log('STARTING attack: ', attackInstance, target);
+        if(attackInstance.canStartAttack(target)) {
+            attackInstance.startAttack(target);
 
-    canStartAttack: function(theAttack) {
-        //console.log('canstart: ', !this.startedAttack, theAttack.canStartAttack(), this.trigger('canStartAttack', theAttack));
-        return !this.startedAttack && theAttack.canStartAttack() && this.trigger('canStartAttack', theAttack);
-    },
+            this.startAttackAnimation(attackInstance);
 
-    startAttack: function(theAttack) {
-        if(this.canStartAttack(theAttack)) {
-            theAttack.attacking = true;
-            this.attackAnimationCooldown = theAttack.props.attackAnimationCooldown;
-            this.startedAttack = theAttack;
-            this.startAttackAnimation(theAttack);
-            //TODO: the sound effect should play at 'finishAttack'
+            //TODO: the sound effect should play at 'finishAttack', also if slime is obviously terrible
             if(this.name == 'slime')
                 setTimeout(function() {
-                    cc.audioEngine.playEffect(res[this.name + '_sfx']);
+                    this.attackSound = cc.audioEngine.playEffect(res[this.name + '_sfx']);
                 }.bind(this), 800);
             else
-                cc.audioEngine.playEffect(res[this.name + '_sfx']);
+                this.attackSound = cc.audioEngine.playEffect(res[this.name + '_sfx']);
         }
     },
 
     //TODO: move this somewhere else for graphics... this is in between all the game logic functions...
-    startAttackAnimation: function(theAttack) {
+    startAttackAnimation: function(attackInstance) {
         var frames = Animations.frames[this.name].attacking;
-        console.log('frames: ', frames, this.orientation);
+        //console.log('frames: ', frames, this.orientation);
         if(frames.all)
-            this.runAction(Animations.getAnimation(frames.all, theAttack.props.attackAnimationCooldown, 1));
+            this.attackAnimation = this.runAction(Animations.getAnimation(frames.all, attackInstance.attackAnimationCooldown, 1));
         else
-            this.runAction(Animations.getAnimation(frames[this.orientation], theAttack.props.attackAnimationCooldown, 1));
+            this.attackAnimation = this.runAction(Animations.getAnimation(frames[this.orientation], attackInstance.attackAnimationCooldown, 1));
     },
 
-    finishAttack: function() {
-        this.startedAttack = null;
-    },
+    cancelAttack: function(attackInstance) {
+        this.stopAction(this.attackAnimation);
+        cc.audioEngine.stopEffect(this.attackSound);
+        attackInstance.cancelAttack();
 
-    considerTarget: function(currentTarget, consideredTarget, attack) {
-        var found = false;
-        //Special case, shouldn't use trigger. TODO: this seems messy?
-        this.modules.forEach(function(module) {
-            if(module.considerTarget)
-                found = module.considerTarget(currentTarget, consideredTarget, attack);
-        }, this);
-        if(found)
-            return found;
-        //default is to attack the closest target
-        if(MathHelper.dist(currentTarget, this) < MathHelper.dist(consideredTarget, this))
-            return currentTarget;
-        else
-            return consideredTarget;
+        console.log('Attack canceled.');
     },
 
     takeAttack: function(attack, attacker) {
         console.error('takeAttack hasn\'t been implemented!', attack, attacker);
     },
 
-    trigger: function(moduleEvent) {
-        var args = Array.prototype.slice.call(arguments, 1);
-
-        return this.modules.every(function(module) {
-            if(module[moduleEvent])
-                return module[moduleEvent].apply(this, args); 
-            else
-                return true;
-        }, this);
+    registerAttack: function(attack) {
+       //inAttackRange 
+       this.attacks.push(attack);
+       this.onFenceEnter('monster', attack.props.range, function(monster, distance) {
+            Event.trigger('inAttackRange', [attack, monster], {distance: distance});
+       });
     },
 });

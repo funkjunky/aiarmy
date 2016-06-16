@@ -4,125 +4,66 @@ var Attack = function(owner, props, attrs) {
     this.props = props;
     this.attrs = attrs;
 
-    this.currentTarget = null;
-
-    this.engaged = [];
-    this.engagedEvents = {};
-
-    this.idle = true;
-    this.preparing = false;
-    this.attacking = false;
-    this.attackCooldown = this.props.attackCooldown;
-
-    this.inRange = [];
+    this.activeAttack = null;
 
     return this;
 };
 
 Attack.prototype.update = function(dt) {
-    if(this.inRange.length <= 0) {
-        //this.resetAttackAnimation();
-        LiveDebugger.set('attack' + this.attrs.baseDamage, this.attrs.baseDamage + ': OFF');
-        if(this.preparing || this.attacking)
-            this.cancelAttack();
-        return;
-    }
-    LiveDebugger.set('attack' + this.attrs.baseDamage, this.attrs.baseDamage + ': ' + this.idle + ' -> ' + this.preparing + ' -> ' + this.attacking + '| cd: ' + (Math.round(this.attackCooldown * 100) / 100) + '--inrange: ' + this.inRange[0].__instanceId);
-
-    this.updateTarget();
-    if(this.idle) {
-        this.prepareAttack();
-    }
-
-    if(this.preparing && !this.attacking && (this.attackCooldown -= dt) <= 0)
-        this.owner.startAttack(this);
-};
-
-Attack.prototype.updateTarget = function() {
-    if(!this.currentTarget && this.inRange.length)
-        this.currentTarget = this.inRange[0];
-
-    this.inRange.forEach(function(enemy) {
-        this.currentTarget = this.owner.considerTarget(this.currentTarget, enemy, this);
-    }, this);
-
-    if(!this.currentTarget.parent) //if the node no longer exists, then set the target to null
-        this.currentTarget = null;
-
-    if(this.currentTarget)
-        LiveDebugger.set(this.attrs.baseDamage + 'currentTarget', this.attrs.baseDamage + ' currentTarget: ' + this.currentTarget.__instanceId);
-    else
-        LiveDebugger.set(this.attrs.baseDamage + 'currentTarget', this.attrs.baseDamage + ' currentTarget: null');
-};
-
-Attack.prototype.engage = function(character, enemy) {
-    console.log('engaging: ', character, enemy, enemy.id);
-    this.engagedEvents[enemy.id] = {
-        enter: character.onFenceEnter(enemy, this.props.range, function(enemy, distance) {
-            if(!enemy.parent) //TODO: if this isn't in the layer, then immediately disengage. Needed for after a monster dies.
-                return this.disengage(character, enemy);
-            console.log('in range: ', enemy.__instanceId);
-
-            this.inRange.push(enemy);
-        }.bind(this)),
-        exit: character.onFenceExit(enemy, this.props.range, function(enemy, distance) {
-            this.inRange.splice(this.inRange.indexOf(enemy), 1);
-            if(enemy == this.currentTarget)
-                this.resetAttackAnimation();
-        }.bind(this)),
-    };
-
-    console.log('engaged events: ', this.engagedEvents);
-
-    this.owner.trigger('engage', this, enemy);
-};
-
-Attack.prototype.resetAttackAnimation = function() {
-    this.attacking = false;
-    console.log(this.attrs.baseDamage + ' attack reset.');
-};
-
-Attack.prototype.cancelAttack = function() {
-    this.attacking = false;
-    this.preparing = false;
-    this.idle = true;
-    console.log(this.attrs.baseDamage + ' attack canceled.');
-};
-
-Attack.prototype.disengage = function(character, enemy) {
-    if(this.currentTarget == enemy)
-        this.currentTarget = null;
-    character.fenceEvents.splice(character.fenceEvents.indexOf(this.engagedEvents[enemy.id].enter), 1);
-    character.fenceEvents.splice(character.fenceEvents.indexOf(this.engagedEvents[enemy.id].exit), 1);
-    this.owner.trigger('disengage', this, enemy);
+    if(this.activeAttack)
+        this.activeAttack.update(dt);
 };
 
 //Note: if you override this function, you must call this parent function ie.:
 // return result && Attack.prototype.canPrepareAttack.apply(this, arguments);
 Attack.prototype.canPrepareAttack = function() {
-    LiveDebugger.set(this.attrs.baseDamage + 'currentTargett', this.attrs.baseDamage + ' canprepare: ' + this.targetIsValid() + " " + this.owner.canPrepareAttack(this));
-    return this.idle && this.targetIsValid() && this.owner.canPrepareAttack(this);
+    //return !this.activeAttack && this.owner.canPrepareAttack(this);
+    return !this.activeAttack || this.activeAttack.done();
 };
 
-Attack.prototype.prepareAttack = function() {
+Attack.prototype.prepareAttack = function(target) {
     if(!this.canPrepareAttack())
         return false;
 
-    this.idle = false;
-    this.preparing = true;
-    this.attackCooldown = this.props.attackCooldown;
+    this.activeAttack = this.createAttackInstance(target, this.attrs);
+
+    Event.trigger('preparingAttack', this, {attackInstance: this.activeAttack});
+
+    if(!this.activeAttack.targetInRange(target))
+        this.owner.seek(target, this.props.range, function() {
+            //console.log('FINISHED SEEK! Attack.js');
+        });
+
+    return this.activeAttack;
 };
 
-Attack.prototype.canStartAttack = function() {
-    return this.targetIsValid();
+//Each attack should define it's own createAttackInstance
+Attack.prototype.createAttackInstance = function(target, attrs) {
+    attrs = attrs || {};
+    for(var k in this.attrs[k])
+        if(!attrs[k])
+            attrs[k] = this.attrs[k];
+
+    var instance = new AttackInstance(this, target, attrs);
+    return instance;
 };
 
-Attack.prototype.targetIsValid = function() {
-    return !!(this.currentTarget && this.currentTarget.parent);
+Attack.prototype.targetInRange = function(target) {
+    return MathHelper.dist(target, this.owner) <= this.props.range;
 };
 
-Attack.prototype.finishAttack = function() {
-    this.preparing = false;
-    this.attacking = false;
-    this.idle = true;
+//TODO: this is SUPER ugly... i dunno...
+//If this EVER causes a problem. Then no more stacked callbacks in attackPrepared or attackFinished, or ANYWHERE
+function shoehornCallbacks(callbacks, newCallbacks) {
+    for(var k in newCallbacks)
+        if(callbacks[k])
+            callbacks[k] = function(oldCallback, newCallback) {
+                var realArguments = arguments.slice(2);
+                oldCallback.apply(this, realArguments);
+                newCallback.apply(this, realArguments);
+            }.bind(this, callbacks[k], newCallbacks[k]);
+        else
+            callbacks[k] = newCallbacks[k];
+
+    return callbacks;
 };

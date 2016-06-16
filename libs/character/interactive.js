@@ -7,6 +7,7 @@ var Interactive = cc.Sprite.extend({
     goingToAction: null,
     goingToTTL: 0,
     onRemoveFncs: null,
+    speed: 0.5,
     ctor: function(resource, tags) {
         this._super(resource);
 
@@ -16,7 +17,7 @@ var Interactive = cc.Sprite.extend({
 
         this.tags = [];
         this.selectEvents = [];
-        this.fenceEvents = [];
+        this.fenceEvents = []; //Note: Handled by interactive-top-down-layer
         this.onRemoveFncs = [];
 
         if(tags)
@@ -89,12 +90,15 @@ var Interactive = cc.Sprite.extend({
     },
 
     //TODO: I shouldn't use actions for seeking. This one is very dynamic. I should simply use update and move myself? maybe move from tile to tile during update?
+    /*
     seek: function(object) {
         //console.log('object: ', object);
         this.goingTo = object;
         this.setNewSeek();
     },
+    */
 
+/*
     setNewSeek: function() {
         var gameMap = _globals.gameMap;
         var oldAction = this.goingToAction;
@@ -103,6 +107,7 @@ var Interactive = cc.Sprite.extend({
         if(oldAction)
             this.stopAction(oldAction);
     },
+    */
 
     removeAsInteractive: function() {
         //console.log('removing this from parent.' + this.__instanceId);
