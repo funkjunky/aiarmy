@@ -27,7 +27,7 @@ Attack.prototype.prepareAttack = function(target) {
 
     this.activeAttack = this.createAttackInstance(target, this.attrs);
 
-    Event.trigger('preparingAttack', this, {attackInstance: this.activeAttack});
+    Event.trigger('preparingAttack', [this, this.owner], {attackInstance: this.activeAttack});
 
     if(!this.activeAttack.targetInRange(target))
         this.owner.seek(target, this.props.range, function() {

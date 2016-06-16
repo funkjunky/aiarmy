@@ -18,17 +18,18 @@ var Event = (function() {
             });
         },
         //Note: trigger well return an array of all return values from subscription callbacks
-        //Second note: if object is false-y, then all events for all objects well be triggered.
-        //Third note: object can be an array, and it must match the same objects if an array.
-        trigger: function(event, object, data) {
+        //Second note: if objects is false-y, then all events for all objects well be triggered.
+        //Third note: objects is an array, subscriptions must match only one of the objects
+        //Fourth: an object can be an array, in which case it must match the same objects if an array.
+        trigger: function(event, objects, data) {
             console.log('trigger: ', event, events[event]);
             if(!events[event])
                 return [];
 
             var result = events[event].filter(function(subscription) {
-                return !subscription.off && objectsMatch(subscription.object, object);
+                return !subscription.off && objects.some(function(object) { return objectsMatch(subscription.object, object); });
             }).map(function(subscription) {
-                var ret = subscription.callback.call(object, data);
+                var ret = subscription.callback.call(objects, data);
 
                 if(subscription.once)
                     subscription.toBeDeleted = true;
@@ -57,6 +58,7 @@ var Event = (function() {
             });
         },
 
+        //TODO: the below features aren't used anywhere yet. FYI
         turnOff: function(event, object) {
             events[event].filter(function(subscription) {
                 return !object || subscription.object === object;

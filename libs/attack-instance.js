@@ -18,18 +18,19 @@ AttackInstance.prototype.update = function(dt) {
     if(this.preparing && (this.attackCooldown -= dt) <= 0){ 
         //console.log('attack instance: attack prepared!!');
         this.preparing = false;
-        //Event.trigger('attackPrepared', this, {target: this.target});
+        //Event.trigger('attackPrepared', [this, this.attack, this.attack.owner], {target: this.target});
         if(this.targetInRange(this.target))
-            Event.trigger('attackPreparedAndInRange', this, {target: this.target});
+            Event.trigger('attackPreparedAndInRange', [this, this.attack, this.attack.owner], {target: this.target});
         else
             Event.subscribeOnce('inAttackRange', [this.attack, this.target], function(data) { //trigger is in character/Engager->registerAttack
-                Event.trigger('attackPreparedAndInRange', this[0].activeAttack, {target: this[0].activeAttack.target});
+                var attackInstance = this[0][0].activeAttack;
+                Event.trigger('attackPreparedAndInRange', [attackInstance, attackInstance.attack, attackInstance.attack.owner], {target: attackInstance.target});
             });
     }
     else if(this.attacking && (this.attackAnimationCooldown -= dt) <= 0) {
         console.log('attack instance: FINISHED ATTACK');
         this.attacking = false;
-        Event.trigger('attackFinished', this, {victim: this.target});
+        Event.trigger('attackFinished', [this, this.attack, this.attack.owner], {victim: this.target});
     }
 };
 

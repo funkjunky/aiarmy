@@ -70,7 +70,7 @@ var Engager = Interactive.extend({
        //inAttackRange 
        this.attacks.push(attack);
        this.onFenceEnter('monster', attack.props.range, function(monster, distance) {
-            Event.trigger('inAttackRange', [attack, monster], {distance: distance});
+            Event.trigger('inAttackRange', [[attack, monster]], {distance: distance});
        });
     },
 });

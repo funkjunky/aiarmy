@@ -1,3 +1,4 @@
+//TODO: relentless-attack seems to do the same thing.
 var MethodKeepAttacking = function(characterAttack) {
     var currentTarget;
     characterAttack.keepAttacking = function(target) {

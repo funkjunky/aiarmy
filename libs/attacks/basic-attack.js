@@ -9,7 +9,7 @@ BasicAttack.prototype.constructor = BasicAttack;
 BasicAttack.prototype.createAttackInstance = function(target, attrs) {
     var attackInstance = Attack.prototype.createAttackInstance.call(this, target, attrs);
     Event.subscribeOnce('attackFinished', attackInstance, function(data) {
-        data.victim.takeAttack({dmg: this.attrs.baseDamage}, this.attack.owner);
+        data.victim.takeAttack({dmg: this[0].attrs.baseDamage}, this[0].attack.owner);
     });
 
     return attackInstance;
