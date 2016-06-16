@@ -19,15 +19,21 @@
         "libs/top-down-layer.js",
         "libs/touch-debug-layer.js",
         "libs/interactive-top-down-layer.js",
+        "libs/attack-instance.js",
+        "libs/event.js",
 
             "libs/modules/module-template.js",
             "libs/modules/attacks-back.js",
+            "libs/modules/relentless-attack.js",
             "libs/modules/double-attack.js",
             "libs/modules/engage-closest.js",
             "libs/modules/engage-first.js",
             "libs/modules/gain-exp-from-monsters.js",
             "libs/modules/mutually-exclusive-attacks.js",
             "libs/modules/seek-to-engage.js",
+            "libs/modules/attack-selected.js",
+            "libs/modules/full-attack.js",
+            "libs/modules/method-seek.js",
 
 
             "libs/attacks/attack.js",

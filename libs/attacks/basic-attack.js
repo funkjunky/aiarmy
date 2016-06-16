@@ -6,12 +6,17 @@ var BasicAttack = function(owner, props, attrs) {
 BasicAttack.prototype = Object.create(Attack.prototype);
 BasicAttack.prototype.constructor = BasicAttack;
 
-BasicAttack.prototype.finishAttack = function() {
-    this.currentTarget.takeAttack({dmg: this.attrs.baseDamage}, this.owner);
-    this.currentTarget.trigger('takeAttack', {dmg: this.attrs.baseDamage}, this.owner)
-    Attack.prototype.finishAttack.call(this);
+BasicAttack.prototype.createAttackInstance = function(target, attrs) {
+    var attackInstance = Attack.prototype.createAttackInstance.call(this, target, attrs);
+    Event.subscribeOnce('attackFinished', attackInstance, function(data) {
+        data.victim.takeAttack({dmg: this.attrs.baseDamage}, this.attack.owner);
+    });
+
+    return attackInstance;
 };
 
+/*
 BasicAttack.prototype.getDps = function() {
     return this.attrs.baseDamage / (this.props.attackAnimationCooldown + this.props.attackCooldown);
 };
+*/

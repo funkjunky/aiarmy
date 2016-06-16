@@ -7,6 +7,10 @@ MathHelper.dist = function(p1, p2) {
     return Math.sqrt(dx * dx + dy * dy);
 }
 
+MathHelper.eq = function(p1, p2) {
+    return p1.x == p2.x && p1.y == p2.y;
+}
+
 MathHelper.areRectsIntersecting = function(rect1, rect2) {
     var lines = MathHelper._linesInRect(rect1);
     for(var i=0; i!=lines.length; ++i)

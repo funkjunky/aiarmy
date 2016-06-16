@@ -5,13 +5,15 @@ function GameMap(tiledMap, blockedTag) {
 };
 
 //TODO: I think this should be in TopDownLayer instead...
-GameMap.prototype.move = function(character, loc, speed) {
+//Speed is in pixels per second
+GameMap.prototype.move = function(character, loc, speed, howClose, cb) {
     if(pointsEqual(this.getCoords(character), this.getCoords(loc)))
         return null;
     if(character.aMoveAction && !character.aMoveAction.isDone())
         character.stopAction(character.aMoveAction);
     console.log('from, to: ', this.getCoords(character), this.getCoords(loc));
-    var path = this.getAStar(this.getCoords(character), this.getCoords(loc));
+    var path = this.getAStar(this.getCoords(character), this.getCoords(loc), howClose);
+    console.log('path: ', path);
     if(!path.length)
         return null;
 
@@ -25,7 +27,7 @@ GameMap.prototype.move = function(character, loc, speed) {
     var durationCarryOver = 0;
     path.forEach(function(point, index) {
         //calculate duration for movement and duration
-        var duration = speed * MathHelper.dist(point, lastPoint);
+        var duration = (MathHelper.dist(point, lastPoint)*64) / speed;
 
         //push move
         moves.push(cc.MoveTo.create(duration, this.adjustedScreenCoords(point)));
@@ -66,6 +68,8 @@ GameMap.prototype.move = function(character, loc, speed) {
     //console.log('last frames: ', frames, character.name, lastOrientation);
     animations.push(Animations.getAnimation(frames, 0.5, 1));
 
+    if(cb)
+        moves.push(cc.CallFunc.create(cb));
     //NOTE: sequence gobbles up the move. So moves well be empty after giving it to sequence.
     character.aMoveAction = cc.sequence(moves);
 
@@ -136,8 +140,8 @@ GameMap.prototype.getScreenTileCoords = function(screenLoc) {
 
 //g --- calculated distance from start
 //h --- calculated estimated length of path
-GameMap.prototype.getAStar = function(mapLocBegin, mapLocEnd) {
-    console.log('pathing: ', mapLocBegin, mapLocEnd);
+GameMap.prototype.getAStar = function(mapLocBegin, mapLocEnd, howClose) {
+    console.log('pathing: ', mapLocBegin, mapLocEnd, howClose);
     //TODO: use a clone function
     mapLocBegin = {
         x: mapLocBegin.x,
@@ -155,7 +159,7 @@ GameMap.prototype.getAStar = function(mapLocBegin, mapLocEnd) {
     var maxCount = 300
     while(openList.length > 0) {
         if(++count > maxCount) {
-            console.error('AStar went over 200, too complicated of a path'); break;
+            console.error('AStar went over '+maxCount+', too complicated of a path'); break;
         }
         //grab cheapest estimated node to process next
         var currentIndex = 0;
@@ -165,7 +169,7 @@ GameMap.prototype.getAStar = function(mapLocBegin, mapLocEnd) {
         var currentNode = openList[currentIndex];
 
         //end case -> result has been found
-        if(pointsEqual(currentNode, mapLocEnd)) {
+        if((howClose && (MathHelper.dist(currentNode, mapLocEnd) * 64) <= howClose) || pointsEqual(currentNode, mapLocEnd)) {
             var curr = currentNode;
             var ret = [];
             while(curr) {

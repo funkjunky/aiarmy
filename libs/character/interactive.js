@@ -7,14 +7,17 @@ var Interactive = cc.Sprite.extend({
     goingToAction: null,
     goingToTTL: 0,
     onRemoveFncs: null,
+    speed: 0.5,
     ctor: function(resource, tags) {
         this._super(resource);
 
-        this.setAnchorPoint(0,0);
+        this.ignoreAnchorPointForPosition(true);
+        this.setAnchorPoint(cc.p(0.5,0.5));
+        console.log('anchors: ', this.ignoreAnchor, this.anchorX, this.anchorY);
 
         this.tags = [];
         this.selectEvents = [];
-        this.fenceEvents = [];
+        this.fenceEvents = []; //Note: Handled by interactive-top-down-layer
         this.onRemoveFncs = [];
 
         if(tags)
@@ -87,19 +90,24 @@ var Interactive = cc.Sprite.extend({
     },
 
     //TODO: I shouldn't use actions for seeking. This one is very dynamic. I should simply use update and move myself? maybe move from tile to tile during update?
+    /*
     seek: function(object) {
         //console.log('object: ', object);
         this.goingTo = object;
         this.setNewSeek();
     },
+    */
 
+/*
     setNewSeek: function() {
         var gameMap = _globals.gameMap;
         var oldAction = this.goingToAction;
         this.goingToAction = gameMap.move(this, this.goingTo, 0.3);    //TODO: dont' hardcore speed. It should be on a lower level class I think? Not Interactive.
+        console.log('starting new seek, oldaction: ', oldAction);
         if(oldAction)
             this.stopAction(oldAction);
     },
+    */
 
     removeAsInteractive: function() {
         //console.log('removing this from parent.' + this.__instanceId);

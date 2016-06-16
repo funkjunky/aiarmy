@@ -1,30 +1,33 @@
 var _globals = {};
-var HelloWorldLayer = InteractiveTopDownLayer.extend({
+var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
+    customEvents: {onCreateAttackable: []},
     ctor:function () {
         this._super();
+        _globals.game = this;
 
         //TODO: where should i put this strange global cache thing?
         _globals.spriteCache = cc.spriteFrameCache;
         cc.spriteFrameCache.addSpriteFrames(res.thief);
         cc.spriteFrameCache.addSpriteFrames(res.slime);
 
+
         var gameMap = this.gameMap = new GameMap(new cc.TMXTiledMap(res.smallMap), "obstructions");
         _globals.gameMap = gameMap;
 
         var thief = this.createInteractive(Thief, {
-            x: cc.winSize.width / 2,
-            y: cc.winSize.height / 2,
+            x: 32,
+            y: 32,
         });
 
-        var monster = this.createInteractive(Slime, {
-            x: 150,
-            y: 500,
-        });
+        var monster = this.createAttackable(Slime, {
+            x: 32*15,
+            y: 32*1,
+        }, thief);
 
-        var monster2 = this.createInteractive(Slime, {
-            x: 550,
-            y: 50,
-        });
+        var monster2 = this.createAttackable(Slime, {
+            x: 32*1,
+            y: 32*15,
+        }, thief);
 
         var self = this;
         var respawnAfterDeath = function() {
@@ -32,10 +35,10 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
                 var max = 18 * 32;
                 var margins = 32;
                 
-                var newMonster = self.createInteractive(Slime, {
+                var newMonster = self.createAttackable(Slime, {
                     x: Math.random() * (max - (margins * 2)) + margins,
                     y: Math.random() * (max - (margins * 2)) + margins,
-                });
+                }, thief);
                 console.log('added new rat: ', newMonster);
                 newMonster.onRemove(respawnAfterDeath);
                 self.addChild(newMonster);
@@ -47,21 +50,20 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
 
 //            BubbleText.quickPrint('Hello!', character, {panOffset: {x: 0, y: 64}});
         thief.onFenceEnter('monster', 64*10, function(monster, distance) {
-            BubbleText.quickPrint('Engard!!', thief, {panOffset: {x: 0, y: 64}});
+            BubbleText.quickPrint('Hey look! A monster!', thief, {panOffset: {x: 0, y: 64}});
         });
 
         thief.onFenceExit('monster', 128, function(monster, distance) {
             BubbleText.quickPrint('I just wanted hugs...', monster, {panOffset: {x: 0, y: 64}});
         });
 
-        monster.onSelect(function() {
-            do {
-                randomLocation = {x: Math.random() * cc.winSize.width, y: Math.random() * cc.winSize.height};
-            } while(!gameMap.move(enemy, randomLocation, 0.05)) //speed is seconds per tile
-        }, true);
-
         this.onClick(function(touches, event) {
-            gameMap.move(thief, touches[0].getLocation(), 0.1); //speed is seconds per tile
+            thief.attacks.forEach(function(attack) {
+                if(attack.currentTarget)
+                    attack.disengage(thief, attack.currentTarget);
+            });
+            gameMap.move(thief, touches[0].getLocation(), thief.speed); //speed is seconds per tile
+            console.log('point', MathHelper.isPointInsideRect(touches[0], monster), touches[0]);
         });
 
         this.addChild(this.gameMap.tiledMap);
@@ -69,9 +71,46 @@ var HelloWorldLayer = InteractiveTopDownLayer.extend({
         this.addChild(monster);
         this.addChild(monster2);
 
+        console.log('monster locations: ', monster.x, monster.y, monster2.x, monster2.y);
+
         this.addOnHoverEffect();
 
+/*
+            //TODO: When im ready to put in particle effects, this works, but ill need to learn more about it.
+            var effect = new cc.ParticleFlower();
+            effect.texture = cc.textureCache.addImage("res/particle-stars.png");
+            effect.setShapeType(cc.ParticleSystem.STAR_SHAPE);
+            effect.x = 300;
+            effect.y = 300;
+            effect.initWithTotalParticles(1000);
+            effect.setDuration(5);
+            effect.setStartColor(new cc.Color(1,0,0,1));
+            this.addChild(effect);
+*/
+
+        //cc.audioEngine.playMusic(res.bg_music, true);
+        //cc.audioEngine.setMusicVolume(0.6);
+
         return true;
+    },
+    createAttackable: function(Character, location, thief) {
+        var attackableCharacter = this.createInteractive(Character, location);
+        /*
+        attackableCharacter.onSelect(function() {
+            thief.attacks.forEach(function(attack) {
+                if(attack.currentTarget)
+                    attack.disengage(thief, attack.currentTarget);
+            });
+            thief.attacks.forEach(function(attack) {
+                attack.engage(thief, attackableCharacter);
+            });
+        }, true);
+        */
+        this.customEvents.onCreateAttackable.forEach(function(cb) { cb(attackableCharacter) }); 
+        return attackableCharacter;
+    },
+    onCreateAttackable: function(cb) {
+        this.customEvents.onCreateAttackable.push(cb);
     },
 });
 
