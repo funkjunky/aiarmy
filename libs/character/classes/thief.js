@@ -37,11 +37,21 @@ var Thief = Leveler.extend({
 
         //this.modules.push(EngageFirst(this));
         //this.modules.push(SeekToEngage());
-        this.modules.push(MethodSeek(this));
-        this.modules.push(MethodFullAttack(this));
-        this.modules.push(RelentlessAttack(this, this.attacks[0]));
-        this.modules.push(AttackSelected(this, this.attacks[0]));
-        this.modules.push(DoubleAttack(this, this.attacks[0], 0.5));
+        //this.modules.push(MethodSeek(this));
+        //this.modules.push(MethodFullAttack(this));
+        var seekMethods = MethodSeek();
+        this.seek = seekMethods.seek;
+        this.cancelSeek = seekMethods.cancelSeek;
+        this.doNewSeek = seekMethods.doNewSeek;
+
+        var fullAttackMethods = MethodFullAttack();
+        this.fullAttack = fullAttackMethods.fullAttack;
+        //TODO: is cancelFullAttack necessary when I have cancel attack? Perhaps I should simply replace cancel attack to include additional code for also canceling full attack?
+        this.cancelFullAttack = fullAttackMethods.cancelFullAttack;
+
+        RelentlessAttack(this, this.attacks[0]);
+        AttackSelected(this, this.attacks[0]);
+        DoubleAttack(this, this.attacks[0], 0.5);
         /*
         this.modules.push(MutuallyExclusiveAttacks(this.attacks, function comp(a, b) {
             //console.log('dps: ', a.getDps(), b.getDps());

@@ -23,9 +23,17 @@ var Slime = Monster.extend({
             baseDamage: 2,
         }));
 
-        this.modules.push(MethodSeek(this));
-        this.modules.push(MethodFullAttack(this, this.attacks[0]));
-        this.modules.push(AttacksBack(this, this.attacks[0]));
+        var seekMethods = MethodSeek();
+        this.seek = seekMethods.seek;
+        this.cancelSeek = seekMethods.cancelSeek;
+        this.doNewSeek = seekMethods.doNewSeek;
+
+        var fullAttackMethods = MethodFullAttack();
+        this.fullAttack = fullAttackMethods.fullAttack;
+        //TODO: is cancelFullAttack necessary when I have cancel attack? Perhaps I should simply replace cancel attack to include additional code for also canceling full attack?
+        this.cancelFullAttack = fullAttackMethods.cancelFullAttack;
+
+        AttacksBack(this, this.attacks[0]);
         //this.modules.push(SeekToEngage());
     },
 });
