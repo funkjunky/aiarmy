@@ -32,7 +32,7 @@
             "libs/modules/mutually-exclusive-attacks.js",
             "libs/modules/seek-to-engage.js",
             "libs/modules/attack-selected.js",
-            "libs/modules/full-attack.js",
+            "libs/modules/method-full-attack.js",
             "libs/modules/method-seek.js",
 
 

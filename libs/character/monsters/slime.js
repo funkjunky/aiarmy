@@ -24,7 +24,7 @@ var Slime = Monster.extend({
         }));
 
         this.modules.push(MethodSeek(this));
-        this.modules.push(FullAttack(this, this.attacks[0]));
+        this.modules.push(MethodFullAttack(this, this.attacks[0]));
         this.modules.push(AttacksBack(this, this.attacks[0]));
         //this.modules.push(SeekToEngage());
     },

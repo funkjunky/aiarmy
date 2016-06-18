@@ -38,7 +38,7 @@ var Thief = Leveler.extend({
         //this.modules.push(EngageFirst(this));
         //this.modules.push(SeekToEngage());
         this.modules.push(MethodSeek(this));
-        this.modules.push(FullAttack(this, this.attacks[0]));
+        this.modules.push(MethodFullAttack(this));
         this.modules.push(RelentlessAttack(this, this.attacks[0]));
         this.modules.push(AttackSelected(this, this.attacks[0]));
         this.modules.push(DoubleAttack(this, this.attacks[0], 0.5));

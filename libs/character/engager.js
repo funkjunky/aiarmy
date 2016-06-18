@@ -27,6 +27,10 @@ var Engager = Interactive.extend({
         }, this);
     },
 
+    prepareAttack: function(attack, target) {
+        return attack.prepareAttack(target);
+    },
+
     startAttack: function(attackInstance, target) {
         //console.log('STARTING attack: ', attackInstance, target);
         if(attackInstance.canStartAttack(target)) {

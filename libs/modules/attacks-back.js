@@ -1,6 +1,6 @@
 var AttacksBack = function(character, attack) {
     Event.subscribe('attackTaken', character, function(data) {
-        attack.fullAttack(data.attacker);
+        character.fullAttack(attack, data.attacker);
     });
     return {};
 };

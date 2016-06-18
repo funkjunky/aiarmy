@@ -1,8 +1,8 @@
-var FullAttack = function(character, attack) {
+var MethodFullAttack = function(character) {
     var startAttackWhenReady = false;
     var attackInstance = null;
     //Note: should i attach fullAttack to attack or character? sorta crappy either way
-    attack.fullAttack = function(target) {
+    character.fullAttack = function(attack, target) {
         startAttackWhenReady = true;
 
         //we were attacking a different monster, then cancel that attack.
@@ -15,7 +15,7 @@ var FullAttack = function(character, attack) {
 
         //if prepare returns false, we probably were already attacking.
         //TODO: these few lines are wordy...
-        var instance = attack.prepareAttack(target);
+        var instance = character.prepareAttack(attack, target);
         if(instance)
             attackInstance = instance;
         else
@@ -27,7 +27,7 @@ var FullAttack = function(character, attack) {
         });
     };
 
-    attack.cancelFullAttack = function() {
+    character.cancelFullAttack = function() {
         startAttackWhenReady = false;
         if(attackInstance)
             character.cancelAttack(attackInstance);

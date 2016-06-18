@@ -3,7 +3,7 @@ var AttackSelected = function(character, attack) {
     var theModule = this;
 
     //this module uses fullAttack
-    character.modules.push(FullAttack(character, attack));
+    //character.modules.push(FullAttack(character, attack));
 
     _globals.game.onCreateAttackable(function(attackableCharacter) {
         attackableCharacter.onSelect(function(point) {
@@ -15,7 +15,7 @@ var AttackSelected = function(character, attack) {
 
             selected = attackableCharacter;
 
-            attack.fullAttack(selected);
+            character.fullAttack(attack, selected);
         }, true);
 
         attackableCharacter.onExit(function() {
