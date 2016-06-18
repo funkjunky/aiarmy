@@ -7,8 +7,11 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
         this.scheduleUpdate();
     },
     update: function(dt) {
+        //TODO: if lag becomes an issue, I could limit these to every x seconds.
         this.handleInteractions();
+        this.handleZIndex();
     },
+
     handleInteractions: function(interactiveExiting) {
         this.interactives.forEach(function(interactive) {
             interactive.fenceEvents.forEach(function(event) {
@@ -22,6 +25,17 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
                 }.bind(this), true);
             }, this);
         }, this);
+    },
+
+    handleZIndex: function() {
+        var verticallyOrdered = this.interactives.sort(function(a, b) {
+            return a.y < b.y;
+        });
+
+        var zIndex = 10;
+        verticallyOrdered.forEach(function(interactive) {
+            interactive.zIndex = ++zIndex;
+        });
     },
 
     //Called: when we check fence events and object isn't in the layer.

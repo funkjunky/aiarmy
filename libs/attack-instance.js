@@ -56,3 +56,7 @@ AttackInstance.prototype.done = function() {
     return !this.preparing && !this.attacking;
 };
 
+AttackInstance.prototype.cancelAttack = function() {
+    this.preparing = this.attacking = false;
+};
+
