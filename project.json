@@ -26,11 +26,6 @@
             "libs/modules/attacks-back.js",
             "libs/modules/relentless-attack.js",
             "libs/modules/double-attack.js",
-            "libs/modules/engage-closest.js",
-            "libs/modules/engage-first.js",
-            "libs/modules/gain-exp-from-monsters.js",
-            "libs/modules/mutually-exclusive-attacks.js",
-            "libs/modules/seek-to-engage.js",
             "libs/modules/attack-selected.js",
             "libs/modules/method-full-attack.js",
             "libs/modules/method-seek.js",
@@ -38,7 +33,6 @@
 
             "libs/attacks/attack.js",
             "libs/attacks/basic-attack.js",
-            "libs/attacks/icy-attack.js",
 
             "libs/character/interactive.js",
             "libs/character/engager.js",

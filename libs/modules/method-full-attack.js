@@ -7,7 +7,6 @@ var MethodFullAttack = function() {
             startAttackWhenReady = true;
 
             //we were attacking a different monster, then cancel that attack.
-            //TODO: perhaps this should be a party of choosing to attack a monster? Should be handled by the character?
             //console.log('target, character.target: ', attack.activeAttack, target, character.target);
             if(attack.activeAttack && target != this.target)
                 this.cancelAttack(attack.activeAttack);

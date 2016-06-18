@@ -3,7 +3,6 @@ var Engager = Interactive.extend({
     id: -1, //TODO: check to see if sprites already had ids... I don't want to overwrite something they already had.
     attacks: null,
 
-    modules: null,      //Note: don't put defaults here. ONLY in ctor. Otherwise shared.
     ctor: function(resource, tags) {
         this._super(resource, tags);
 
@@ -12,18 +11,11 @@ var Engager = Interactive.extend({
         tags.push('engager');
 
         this.scheduleUpdate();
-        this.modules = [];
     },
 
     update: function(dt) {
         this.attacks.forEach(function(attack) {
             attack.update(dt);
-        }, this);
-
-        //Unique module. called on it's own.
-        this.modules.forEach(function(module) {
-            if(module.update)
-                module.update.call(this, dt);
         }, this);
     },
 

@@ -25,8 +25,6 @@ var Leveler = Battler.extend({
 
         this.addChild(expBackground);
 
-        this.modules.push(GainExpFromMonsters());
-
         Event.subscribe('enemyDefeated', this, function(data) {
             this[0].gainExp(data.victim.exp);
         });

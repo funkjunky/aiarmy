@@ -14,9 +14,3 @@ BasicAttack.prototype.createAttackInstance = function(target, attrs) {
 
     return attackInstance;
 };
-
-/*
-BasicAttack.prototype.getDps = function() {
-    return this.attrs.baseDamage / (this.props.attackAnimationCooldown + this.props.attackCooldown);
-};
-*/

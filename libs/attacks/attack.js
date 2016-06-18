@@ -17,7 +17,6 @@ Attack.prototype.update = function(dt) {
 //Note: if you override this function, you must call this parent function ie.:
 // return result && Attack.prototype.canPrepareAttack.apply(this, arguments);
 Attack.prototype.canPrepareAttack = function() {
-    //return !this.activeAttack && this.owner.canPrepareAttack(this);
     return !this.activeAttack || this.activeAttack.done();
 };
 
@@ -50,20 +49,4 @@ Attack.prototype.createAttackInstance = function(target, attrs) {
 
 Attack.prototype.targetInRange = function(target) {
     return MathHelper.dist(target, this.owner) <= this.props.range;
-};
-
-//TODO: this is SUPER ugly... i dunno...
-//If this EVER causes a problem. Then no more stacked callbacks in attackPrepared or attackFinished, or ANYWHERE
-function shoehornCallbacks(callbacks, newCallbacks) {
-    for(var k in newCallbacks)
-        if(callbacks[k])
-            callbacks[k] = function(oldCallback, newCallback) {
-                var realArguments = arguments.slice(2);
-                oldCallback.apply(this, realArguments);
-                newCallback.apply(this, realArguments);
-            }.bind(this, callbacks[k], newCallbacks[k]);
-        else
-            callbacks[k] = newCallbacks[k];
-
-    return callbacks;
 };
