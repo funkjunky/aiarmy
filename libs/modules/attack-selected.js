@@ -10,7 +10,7 @@ var AttackSelected = function(character, attack) {
             if(theModule.disabled)
                 return;
 
-            if(selected == attackableCharacter)
+            if(selected == attackableCharacter && character.attacks[0].activeAttack && !character.attacks[0].activeAttack.done())
                 return;
 
             selected = attackableCharacter;

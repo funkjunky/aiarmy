@@ -58,10 +58,9 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
         });
 
         this.onClick(function(touches, event) {
-            thief.attacks.forEach(function(attack) {
-                if(attack.currentTarget)
-                    attack.disengage(thief, attack.currentTarget);
-            });
+            if(thief.attacks[0].activeAttack)
+                thief.cancelAttack(thief.attacks[0].activeAttack)
+
             gameMap.move(thief, touches[0].getLocation(), thief.speed); //speed is seconds per tile
             console.log('point', MathHelper.isPointInsideRect(touches[0], monster), touches[0]);
         });

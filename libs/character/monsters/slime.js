@@ -34,5 +34,6 @@ var Slime = Monster.extend({
         this.cancelFullAttack = fullAttackMethods.cancelFullAttack;
 
         AttacksBack(this, this.attacks[0]);
+        RelentlessAttack(this, this.attacks[0]);
     },
 });

@@ -19,7 +19,7 @@ var Interactive = cc.Sprite.extend({
         if(tags)
             this.tags = tags;
 
-        this.scheduleUpdate();
+        //this.scheduleUpdate();
 
         //TODO: find a simpler way to do events, or make my own event wrapper.
         cc.eventManager.addListener({
@@ -41,7 +41,7 @@ var Interactive = cc.Sprite.extend({
         }.bind(this));
     },
     onFenceEnter: function(tagOrInteractive, range, cb) {
-        var event = {type: 'onEnter', range: range, cb: cb, id: ++eventIncrement};
+        var event = {type: 'onEnter', range: range, cb: cb, id: ++eventIncrement, isNew: true};
         if(typeof tagOrInteractive == 'string')
             event.tag = tagOrInteractive;
         else
@@ -52,7 +52,7 @@ var Interactive = cc.Sprite.extend({
         return event;
     },
     onFenceExit: function(tagOrInteractive, range, cb) {
-        var event = {type: 'onExit', range: range, cb: cb, id: ++eventIncrement};
+        var event = {type: 'onExit', range: range, cb: cb, id: ++eventIncrement, isNew: true};
         if(typeof tagOrInteractive == 'string')
             event.tag = tagOrInteractive;
         else

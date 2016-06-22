@@ -62,8 +62,11 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
         var consideredInRange = objectIndex != -1; //object is "inRange" because it's in the array
         var inRange = distance <= event.range && !assumeOutOfRange;
 
-        if(!(consideredInRange ^ inRange)) //if inRange state is valid, then no need to do anything.
+        if(!(consideredInRange ^ inRange) && !event.isNew) //if inRange state is valid, then no need to do anything.
             return;
+
+        if(event.isNew)
+            delete event.isNew;
 
         if(inRange)
             subject.eventsInteractivesInRange[event.id].push(object);
@@ -71,7 +74,7 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
             subject.eventsInteractivesInRange[event.id].splice(objectIndex, 1);
 
         if(inRange && event.type == 'onEnter' || !inRange && event.type == 'onExit')
-            event.cb(object, distance);
+            event.cb.call(subject, object, distance);
     },
 
     removeChild: function(child, cleanup) {

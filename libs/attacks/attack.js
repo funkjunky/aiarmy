@@ -28,11 +28,6 @@ Attack.prototype.prepareAttack = function(target) {
 
     Event.trigger('preparingAttack', [this, this.owner], {attackInstance: this.activeAttack});
 
-    if(!this.activeAttack.targetInRange(target))
-        this.owner.seek(target, this.props.range, function() {
-            //console.log('FINISHED SEEK! Attack.js');
-        });
-
     return this.activeAttack;
 };
 
@@ -47,6 +42,7 @@ Attack.prototype.createAttackInstance = function(target, attrs) {
     return instance;
 };
 
+//TODO: this may no longer be needed
 Attack.prototype.targetInRange = function(target) {
     return MathHelper.dist(target, this.owner) <= this.props.range;
 };

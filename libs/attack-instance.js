@@ -10,6 +10,17 @@ var AttackInstance = function(attack, target, attrs) {
     this.preparing = true;
     this.attacking = false;
 
+    var attackInstance = this;
+    this._enterEvent = attack.owner.onFenceEnter(this.target, this.range, function(fenceTarget, distance) {
+        Event.trigger('inAttackRange', [[attackInstance, fenceTarget]], {distance: distance});
+    });
+    //if the character goes out of range, then seek to it.
+    this._exitEvent = attack.owner.onFenceExit(this.target, this.range, function(fenceTarget, distance) {
+        this.seek(fenceTarget, attack.props.range, function() {
+            //console.log('FINISHED SEEK! Attack.js');
+        });
+    });
+
     return this;
 };
 
@@ -22,8 +33,8 @@ AttackInstance.prototype.update = function(dt) {
         if(this.targetInRange(this.target))
             Event.trigger('attackPreparedAndInRange', [this, this.attack, this.attack.owner], {target: this.target});
         else
-            Event.subscribeOnce('inAttackRange', [this.attack, this.target], function(data) { //trigger is in character/Engager->registerAttack
-                var attackInstance = this[0][0].activeAttack;
+            Event.subscribeOnce('inAttackRange', [this, this.target], function(data) { //trigger is in character/Engager->registerAttack
+                var attackInstance = this[0][0];
                 Event.trigger('attackPreparedAndInRange', [attackInstance, attackInstance.attack, attackInstance.attack.owner], {target: attackInstance.target});
             });
     }
@@ -31,6 +42,7 @@ AttackInstance.prototype.update = function(dt) {
         console.log('attack instance: FINISHED ATTACK');
         this.attacking = false;
         Event.trigger('attackFinished', [this, this.attack, this.attack.owner], {victim: this.target});
+        this.cleanUpAttack();
     }
 };
 
@@ -58,5 +70,12 @@ AttackInstance.prototype.done = function() {
 
 AttackInstance.prototype.cancelAttack = function() {
     this.preparing = this.attacking = false;
+    this.cleanUpAttack();
+};
+
+AttackInstance.prototype.cleanUpAttack = function() {
+    fenceEvents = this.attack.owner.fenceEvents;
+    fenceEvents.splice(fenceEvents.indexOf(this._enterEvent), 1);
+    fenceEvents.splice(fenceEvents.indexOf(this._exitEvent), 1);
 };
 

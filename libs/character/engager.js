@@ -63,10 +63,6 @@ var Engager = Interactive.extend({
     },
 
     registerAttack: function(attack) {
-       //inAttackRange 
        this.attacks.push(attack);
-       this.onFenceEnter('monster', attack.props.range, function(monster, distance) {
-            Event.trigger('inAttackRange', [[attack, monster]], {distance: distance});
-       });
     },
 });

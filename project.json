@@ -22,7 +22,6 @@
         "libs/attack-instance.js",
         "libs/event.js",
 
-            "libs/modules/module-template.js",
             "libs/modules/attacks-back.js",
             "libs/modules/relentless-attack.js",
             "libs/modules/double-attack.js",
