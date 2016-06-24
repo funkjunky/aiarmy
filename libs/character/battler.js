@@ -28,7 +28,8 @@ var Battler = Engager.extend({
         Event.trigger('attackTaken', [this], {attacker: attacker});
     },
     takeDamage: function(dmg, attacker) {
-        BubbleText.quickPrint(dmg, this, {panOffset: {x: 0, y: 64}});
+        var color = ((this.tags.indexOf('player') != -1)?cc.color(255,122,122):cc.color(255,255,255));
+        BubbleText.quickPrint(dmg, this, {panOffset: {x: 32 - Math.random() * 64, y: 64}, color: color});
         this.hp -= dmg;
         this.healthBar.setTextureRect(cc.rect(0, 0, 32 * (this.hp / this.maxHp), 5));
         if(this.hp <= 0) {

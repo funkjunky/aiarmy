@@ -1,7 +1,7 @@
 var Thief = Leveler.extend({
     name: 'thief',
     ctor: function(level) {
-        this._super(null, ['thief'], level); //TODO: need a better resource manager than 'res'
+        this._super(null, ['thief', 'player'], level); //TODO: need a better resource manager than 'res'
         var spriteframe = cc.spriteFrameCache.getSpriteFrame('thief.png');
         this.initWithSpriteFrame(spriteframe);
         this.maxHp = this.hp = 200;

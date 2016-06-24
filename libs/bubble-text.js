@@ -8,6 +8,7 @@ BubbleText.prototype.setDefaults = function() {
     this.attrs = {
         font: 'Verdana',
         size: 24,
+        color: cc.color(255,255,255),
 
         pos: {x: 0, y: 64},
 
@@ -33,6 +34,7 @@ BubbleText.prototype._print = function(text, layer) {
     var textSprite = new cc.LabelTTF(text, this.attrs.font, this.attrs.size);
     layer.addChild(textSprite); //TODO: I should create constants for z-index, like zIndex.bottom(#), zIndex.create('bottom', 100) 100 + #
     textSprite.attr(this.attrs.pos);
+    textSprite.setColor(this.attrs.color);
 
     if(this.attrs.fading)
         textSprite.runAction(cc.sequence([
