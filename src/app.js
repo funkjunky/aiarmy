@@ -18,16 +18,64 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
             x: 32,
             y: 32,
         });
+        var thief2 = this.createInteractive(Thief, {
+            x: 128,
+            y: 128,
+        });
+        thief2.setColor(new cc.Color(255,0,255,1));
+
+        //TODO: separate this code up... it's all the code that represents the base game... it'll end up being a lot... time to split it up a little
+        var selectedCharacter = thief;
+        cc.director.getScheduler().pauseTarget(thief.attackClosest);
+        this.onClick(function(touches, event) {
+            if(selectedCharacter.attacks[0].activeAttack)
+                selectedCharacter.cancelAttack(selectedCharacter.attacks[0].activeAttack)
+
+            gameMap.move(selectedCharacter, touches[0].getLocation(), selectedCharacter.speed); //speed is seconds per tile
+        });
+
+        var selectedEnemy = null;
+        this.onCreateAttackable(function(attackableCharacter) {
+            console.log('creating on select... ', attackableCharacter);
+            attackableCharacter.onSelect(function(point) {
+                if(selectedEnemy == attackableCharacter && selectedCharacter.attacks[0].activeAttack && !selectedCharacter.attacks[0].activeAttack.done())
+                    return;
+
+                selectedEnemy = attackableCharacter;
+
+                selectedCharacter.fullAttack(selectedCharacter.attacks[0], selectedEnemy);
+            }, true);
+
+            attackableCharacter.onExit(function() {
+                selectedEnemy = null;
+                this._super(); //TODO: god this is ugly... if this is actually how you do it, the perhaps make a wrapper to hide the code
+            });
+        });
+
+        thief.onSelect(function(point) {
+            selectedCharacter = thief;
+            cc.director.getScheduler().pauseTarget(thief.attackClosest);
+
+            cc.director.getScheduler().resumeTarget(thief2.attackClosest);
+        });
+
+        thief2.onSelect(function(point) {
+            selectedCharacter = thief2;
+            cc.director.getScheduler().pauseTarget(thief2.attackClosest);
+
+            cc.director.getScheduler().resumeTarget(thief.attackClosest);
+        });
+
 
         var monster = this.createAttackable(Slime, {
             x: 32*15,
             y: 32*1,
-        }, thief);
+        });
 
         var monster2 = this.createAttackable(Slime, {
             x: 32*1,
             y: 32*15,
-        }, thief);
+        });
 
         var self = this;
         var respawnAfterDeath = function() {
@@ -38,7 +86,7 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
                 var newMonster = self.createAttackable(Slime, {
                     x: Math.random() * (max - (margins * 2)) + margins,
                     y: Math.random() * (max - (margins * 2)) + margins,
-                }, thief);
+                });
                 console.log('added new rat: ', newMonster);
                 newMonster.onRemove(respawnAfterDeath);
                 self.addChild(newMonster);
@@ -57,16 +105,9 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
             BubbleText.quickPrint('I just wanted hugs...', monster, {panOffset: {x: 0, y: 64}});
         });
 
-        this.onClick(function(touches, event) {
-            if(thief.attacks[0].activeAttack)
-                thief.cancelAttack(thief.attacks[0].activeAttack)
-
-            gameMap.move(thief, touches[0].getLocation(), thief.speed); //speed is seconds per tile
-            console.log('point', MathHelper.isPointInsideRect(touches[0], monster), touches[0]);
-        });
-
         this.addChild(this.gameMap.tiledMap);
         this.addChild(thief);
+        this.addChild(thief2);
         this.addChild(monster);
         this.addChild(monster2);
 
@@ -92,19 +133,8 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
 
         return true;
     },
-    createAttackable: function(Character, location, thief) {
+    createAttackable: function(Character, location) {
         var attackableCharacter = this.createInteractive(Character, location);
-        /*
-        attackableCharacter.onSelect(function() {
-            thief.attacks.forEach(function(attack) {
-                if(attack.currentTarget)
-                    attack.disengage(thief, attack.currentTarget);
-            });
-            thief.attacks.forEach(function(attack) {
-                attack.engage(thief, attackableCharacter);
-            });
-        }, true);
-        */
         this.customEvents.onCreateAttackable.forEach(function(cb) { cb(attackableCharacter) }); 
         return attackableCharacter;
     },

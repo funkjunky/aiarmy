@@ -23,6 +23,14 @@ var Slime = Monster.extend({
             baseDamage: 2,
         }));
 
+        this.fx = {
+            animations: Animations.frames[this.name],
+            sounds: {attackFinished: res[this.name + '_sfx']},
+            fxFnc: function(victim) {
+                
+            }.bind(this),
+        };
+
         var seekMethods = MethodSeek();
         this.seek = seekMethods.seek;
         this.cancelSeek = seekMethods.cancelSeek;

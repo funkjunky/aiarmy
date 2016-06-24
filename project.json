@@ -25,7 +25,7 @@
             "libs/modules/attacks-back.js",
             "libs/modules/relentless-attack.js",
             "libs/modules/double-attack.js",
-            "libs/modules/attack-selected.js",
+            "libs/modules/attack-closest.js",
             "libs/modules/method-full-attack.js",
             "libs/modules/method-seek.js",
 

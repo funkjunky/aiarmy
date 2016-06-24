@@ -21,6 +21,14 @@ var Thief = Leveler.extend({
             baseDamage: 5,
         }));
 
+        this.fx = {
+            animations: Animations.frames[this.name],
+            sounds: {attackFinished: res[this.name + '_sfx']},
+            fxFnc: function(victim) {
+                
+            }.bind(this),
+        };
+
         var seekMethods = MethodSeek();
         this.seek = seekMethods.seek;
         this.cancelSeek = seekMethods.cancelSeek;
@@ -32,7 +40,8 @@ var Thief = Leveler.extend({
         this.cancelFullAttack = fullAttackMethods.cancelFullAttack;
 
         RelentlessAttack(this, this.attacks[0]);
-        AttackSelected(this, this.attacks[0]);
+        //AttackSelected(this, this.attacks[0]); //TODO: handled in src/app.js
         DoubleAttack(this, this.attacks[0], 0.5);
+        this.attackClosest = AttackClosest(this);
     },
 });

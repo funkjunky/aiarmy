@@ -102,6 +102,24 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
 
         return interactive;
     }, 
+
+    closestTaggedInteractive: function(character, tag) {
+        var closestInteractive = null;
+        var closestDist = 999999;
+        var interactives = this.interactivesByTag[tag];
+        if(!interactives || interactives.length == 0)
+            return false;
+
+        interactives.forEach(function(interactive) {
+            var dist;
+            if(!closestInteractive || (dist = MathHelper.dist(interactive, character)) < closestDist) {
+                closestDist = dist;
+                closestInteractive = interactive;
+            }
+        });
+
+        return closestInteractive;
+    },
 });
 
 function objInArray(arr, obj) {
