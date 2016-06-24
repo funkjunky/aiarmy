@@ -41,7 +41,8 @@ var Slime = Monster.extend({
         //TODO: is cancelFullAttack necessary when I have cancel attack? Perhaps I should simply replace cancel attack to include additional code for also canceling full attack?
         this.cancelFullAttack = fullAttackMethods.cancelFullAttack;
 
-        AttacksBack(this, this.attacks[0]);
+        //AttacksBack(this, this.attacks[0]);
+        this.attackClosest = AttackClosest(this, 'player');
         RelentlessAttack(this, this.attacks[0]);
     },
 });

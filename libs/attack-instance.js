@@ -39,7 +39,6 @@ AttackInstance.prototype.update = function(dt) {
             });
     }
     else if(this.attacking && (this.attackAnimationCooldown -= dt) <= 0) {
-        //console.log('attack instance: FINISHED ATTACK');
         this.attacking = false;
         Event.trigger('attackFinished', [this, this.attack, this.attack.owner], {victim: this.target});
         this.cleanUpAttack();

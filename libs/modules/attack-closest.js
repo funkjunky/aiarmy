@@ -1,9 +1,9 @@
 var count = 0;
-var AttackClosest = function(character) {
+var AttackClosest = function(character, tag) {
     return (function() {
         this.anid = ++count;
         this.update = function() {
-            var closestTarget = _globals.game.closestTaggedInteractive(character, 'monster');
+            var closestTarget = _globals.game.closestTaggedInteractive(character, tag);
             var attackInstance = character.attacks[0].activeAttack;
             if(!attackInstance || attackInstance.done() || attackInstance.target != closestTarget) {
                 if(attackInstance)

@@ -50,6 +50,6 @@ var Thief = Leveler.extend({
         RelentlessAttack(this, this.attacks[0]);
         //AttackSelected(this, this.attacks[0]); //TODO: handled in src/app.js
         DoubleAttack(this, this.attacks[0], 0.5);
-        this.attackClosest = AttackClosest(this);
+        this.attackClosest = AttackClosest(this, 'monster');
     },
 });

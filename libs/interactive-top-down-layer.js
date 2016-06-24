@@ -46,7 +46,6 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
         console.log('handling final interactions...' + interactive.__instanceId);
         //first call handleInteractions with the object to assume out of range, so we exit all events
         this.handleInteractions(interactive);
-        console.log('done handling final interactions!');
 
         //then we remove the interactive from everywhere.
         this.interactives.splice(this.interactives.indexOf(interactive), 1);
@@ -113,7 +112,8 @@ var InteractiveTopDownLayer = TopDownLayer.extend({
         interactives.forEach(function(interactive) {
             var dist;
             if(!closestInteractive || (dist = MathHelper.dist(interactive, character)) < closestDist) {
-                closestDist = dist;
+                if(dist)
+                    closestDist = dist;
                 closestInteractive = interactive;
             }
         });
