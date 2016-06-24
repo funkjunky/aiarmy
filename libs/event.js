@@ -22,7 +22,7 @@ var Event = (function() {
         //Third note: objects is an array, subscriptions must match only one of the objects
         //Fourth: an object can be an array, in which case it must match the same objects if an array.
         trigger: function(event, objects, data) {
-            console.log('trigger: ', event, events[event]);
+            //console.log('trigger: ', event, events[event]);
             if(!events[event])
                 return [];
 
@@ -43,7 +43,7 @@ var Event = (function() {
                 return !subscription.toBeDeleted;
             });
             if(oldLength > events[event].length)
-                console.log('cleaned events: ', event, events[event].length, oldLength);
+                //console.log('cleaned events: ', event, events[event].length, oldLength);
 
             return result;
         },

@@ -11,9 +11,9 @@ GameMap.prototype.move = function(character, loc, speed, howClose, cb) {
         return null;
     if(character.aMoveAction && !character.aMoveAction.isDone())
         character.stopAction(character.aMoveAction);
-    console.log('from, to: ', this.getCoords(character), this.getCoords(loc));
+    //console.log('from, to: ', this.getCoords(character), this.getCoords(loc));
     var path = this.getAStar(this.getCoords(character), this.getCoords(loc), howClose);
-    console.log('path: ', path);
+    //console.log('path: ', path);
     if(!path.length)
         return null;
 
@@ -141,7 +141,7 @@ GameMap.prototype.getScreenTileCoords = function(screenLoc) {
 //g --- calculated distance from start
 //h --- calculated estimated length of path
 GameMap.prototype.getAStar = function(mapLocBegin, mapLocEnd, howClose) {
-    console.log('pathing: ', mapLocBegin, mapLocEnd, howClose);
+    //console.log('pathing: ', mapLocBegin, mapLocEnd, howClose);
     //TODO: use a clone function
     mapLocBegin = {
         x: mapLocBegin.x,

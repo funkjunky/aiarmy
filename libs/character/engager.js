@@ -42,17 +42,19 @@ var Engager = Interactive.extend({
         else
             this.attackAnimation = this.runAction(Animations.getAnimation(frames[this.orientation], attackInstance.attackAnimationCooldown, 1));
 
-        Event.subscribeOnce('attackFinished', this.attacks[0].activeAttack, function() {
+        Event.subscribeOnce('attackFinished', this.attacks[0].activeAttack, function(data) {
             this[2].attackSound = cc.audioEngine.playEffect(this[2].fx.sounds.attackFinished);
+            this[2].fx.fxFnc.call(this[2], this[0], data.victim);
         });
     },
 
     cancelAttack: function(attackInstance) {
-        this.stopAction(this.attackAnimation);
+        if(this.attackAnimation && this.attackAnimation.target)
+            this.stopAction(this.attackAnimation);
         //cc.audioEngine.stopEffect(this.attackSound);
         attackInstance.cancelAttack();
 
-        console.log('Attack canceled.');
+        //console.log('Attack canceled.');
     },
 
     takeAttack: function(attack, attacker) {

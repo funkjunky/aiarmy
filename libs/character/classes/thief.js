@@ -24,9 +24,17 @@ var Thief = Leveler.extend({
         this.fx = {
             animations: Animations.frames[this.name],
             sounds: {attackFinished: res[this.name + '_sfx']},
-            fxFnc: function(victim) {
-                
-            }.bind(this),
+            fxFnc: function(attackInstance, victim) {
+                var effect = new cc.ParticleFlower();
+                effect.texture = cc.textureCache.addImage("res/particle-stars.png");
+                effect.setShapeType(cc.ParticleSystem.STAR_SHAPE);
+                effect.initWithTotalParticles(200);
+                effect.setDuration(0.4);
+                effect.setStartColor(new cc.Color(1,0,0,1));
+                effect.setPosition(victim.y, victim.y);
+                effect.setAnchorPoint(0, 0);
+                victim.addChild(effect);
+            },
         };
 
         var seekMethods = MethodSeek();

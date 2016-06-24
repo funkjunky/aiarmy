@@ -9,7 +9,7 @@ var Interactive = cc.Sprite.extend({
 
         this.ignoreAnchorPointForPosition(true);
         this.setAnchorPoint(cc.p(0.5,0.5));
-        console.log('anchors: ', this.ignoreAnchor, this.anchorX, this.anchorY);
+        //console.log('anchors: ', this.ignoreAnchor, this.anchorX, this.anchorY);
 
         this.tags = [];
         this.selectEvents = [];

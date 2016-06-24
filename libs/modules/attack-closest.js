@@ -3,7 +3,6 @@ var AttackClosest = function(character) {
     return (function() {
         this.anid = ++count;
         this.update = function() {
-            console.log('anid: ', this.anid);
             var closestTarget = _globals.game.closestTaggedInteractive(character, 'monster');
             var attackInstance = character.attacks[0].activeAttack;
             if(!attackInstance || attackInstance.done() || attackInstance.target != closestTarget) {

@@ -5,7 +5,7 @@ var Battler = Engager.extend({
     ctor: function(resource, tags) {
         tags.push('battler');
         this._super(resource, tags);
-        console.log(this._rect.height, this);
+        //console.log(this._rect.height, this);
 
         var healthBackground = cc.Sprite.create();
         healthBackground.setColor(cc.color(255,255,255,1));

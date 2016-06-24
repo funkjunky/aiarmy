@@ -36,7 +36,7 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
 
         var selectedEnemy = null;
         this.onCreateAttackable(function(attackableCharacter) {
-            console.log('creating on select... ', attackableCharacter);
+            //console.log('creating on select... ', attackableCharacter);
             attackableCharacter.onSelect(function(point) {
                 if(selectedEnemy == attackableCharacter && selectedCharacter.attacks[0].activeAttack && !selectedCharacter.attacks[0].activeAttack.done())
                     return;
@@ -87,7 +87,7 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
                     x: Math.random() * (max - (margins * 2)) + margins,
                     y: Math.random() * (max - (margins * 2)) + margins,
                 });
-                console.log('added new rat: ', newMonster);
+                //console.log('added new rat: ', newMonster);
                 newMonster.onRemove(respawnAfterDeath);
                 self.addChild(newMonster);
             }, 2000);
@@ -111,22 +111,23 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
         this.addChild(monster);
         this.addChild(monster2);
 
-        console.log('monster locations: ', monster.x, monster.y, monster2.x, monster2.y);
+        //console.log('monster locations: ', monster.x, monster.y, monster2.x, monster2.y);
 
         this.addOnHoverEffect();
 
-/*
             //TODO: When im ready to put in particle effects, this works, but ill need to learn more about it.
+            /*
             var effect = new cc.ParticleFlower();
             effect.texture = cc.textureCache.addImage("res/particle-stars.png");
             effect.setShapeType(cc.ParticleSystem.STAR_SHAPE);
-            effect.x = 300;
-            effect.y = 300;
             effect.initWithTotalParticles(1000);
             effect.setDuration(5);
             effect.setStartColor(new cc.Color(1,0,0,1));
+            effect.x = 0;
+            effect.y = 0;
+            effect.setPosition(150, 0);
             this.addChild(effect);
-*/
+            */
 
         //cc.audioEngine.playMusic(res.bg_music, true);
         //cc.audioEngine.setMusicVolume(0.6);
