@@ -42,6 +42,14 @@ var Thief = Leveler.extend({
         this.cancelSeek = seekMethods.cancelSeek;
         this.doNewSeek = seekMethods.doNewSeek;
 
+        var frenzy = OnHoldFrenzy();
+        this.onHoldEnter = frenzy.onHoldEnter;
+        this.onHoldExit = frenzy.onHoldExit;
+
+        var dodger = OnHoldDodger();
+        this.onEnemyHoldEnter = dodger.onHoldEnter;
+        this.onEnemyHoldExit = dodger.onHoldExit;
+
         var fullAttackMethods = MethodFullAttack();
         this.fullAttack = fullAttackMethods.fullAttack;
         //TODO: is cancelFullAttack necessary when I have cancel attack? Perhaps I should simply replace cancel attack to include additional code for also canceling full attack?

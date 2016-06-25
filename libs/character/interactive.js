@@ -13,6 +13,8 @@ var Interactive = cc.Sprite.extend({
 
         this.tags = [];
         this.selectEvents = [];
+        this.enterSelectEvents = [];
+        this.exitSelectEvents = [];
         this.fenceEvents = []; //Note: Handled by interactive-top-down-layer
         this.onRemoveFncs = [];
 
@@ -25,6 +27,12 @@ var Interactive = cc.Sprite.extend({
         cc.eventManager.addListener({
             event: cc.EventListener.TOUCH_ALL_AT_ONCE,
             onTouchesBegan: function(touches, event) {
+                for(var i=0; i!=this.enterSelectEvents.length; ++i)
+                    this.enterSelectEvents[i].fnc(touches[0].getLocation());
+            }.bind(this),
+            onTouchesEnded: function(touches, event) {
+                for(var i=0; i!=this.exitSelectEvents.length; ++i)
+                    this.exitSelectEvents[i](touches[0].getLocation());
                 for(var i=0; i!=this.selectEvents.length; ++i)
                     this.selectEvents[i](touches[0].getLocation());
             }.bind(this),
@@ -39,6 +47,24 @@ var Interactive = cc.Sprite.extend({
                     __stopPropagation = true;
             }
         }.bind(this));
+    },
+    onHold: function(enterFnc, exitFnc, delay, stopPropagation) {
+        this.enterSelectEvents.push({fnc: function(point) {
+            if(MathHelper.isPointInsideRect(point, this)) {
+                enterFnc(point);
+                if(stopPropagation)
+                    __stopPropagation = true;
+            }
+        }.bind(this), delay});
+        this.exitSelectEvents.push(function(point) {
+            if(MathHelper.isPointInsideRect(point, this)) {
+                exitFnc(point);
+                if(stopPropagation)
+                    __stopPropagation = true;
+            }
+        }.bind(this));
+    },
+    onFenceEnter: function(tagOrInteractive, range, cb) {
     },
     onFenceEnter: function(tagOrInteractive, range, cb) {
         var event = {type: 'onEnter', range: range, cb: cb, id: ++eventIncrement, isNew: true};

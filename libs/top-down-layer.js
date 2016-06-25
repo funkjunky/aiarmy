@@ -12,13 +12,44 @@ var TopDownLayer = cc.Layer.extend({
     onClick: function(cb) {
         cc.eventManager.addListener({
             event: cc.EventListener.TOUCH_ALL_AT_ONCE,
-            onTouchesBegan: function(touches, event) {
+            onTouchesEnded: function(touches, event) {
                 //allows selects to not bubble to global clicks.
                 if(__stopPropagation) {
                     __stopPropagation = false;
                     return;
                 }
                 cb.bind(this)(touches, event);
+            }.bind(this),
+        }, this);
+    },
+    onHold: function(enterFnc, exitFnc, delay, holdFnc) {
+        var holdHappened = holdEnded = false;
+        cc.eventManager.addListener({
+            event: cc.EventListener.TOUCH_ALL_AT_ONCE,
+            onTouchesBegan: function(touches, event) {
+                //allows selects to not bubble to global clicks.
+                if(__stopPropagation) {
+                    __stopPropagation = false;
+                    return;
+                }
+                delay = delay || 0;
+                holdEnded = false;
+                setTimeout(function() {
+                    if(holdEnded) //hold ended prematurely
+                        return;
+                    holdHappened = true;
+                    if(enterFnc)
+                        enterFnc.bind(this)(touches, event);
+                }.bind(this), delay);
+            }.bind(this),
+            onTouchesEnded: function(touches, event) {
+                holdEnded = true;
+                if(holdHappened) {
+                    holdHappened = false;
+                    if(exitFnc)
+                        exitFnc.bind(this)(touches, event);
+                    __stopPropagation = true;
+                }
             }.bind(this),
         }, this);
     },

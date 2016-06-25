@@ -33,6 +33,11 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
 
             gameMap.move(selectedCharacter, touches[0].getLocation(), selectedCharacter.speed); //speed is seconds per tile
         });
+        this.onHold(function() {
+            selectedCharacter.onHoldEnter.call(selectedCharacter);
+        }, function() {
+            selectedCharacter.onHoldExit.call(selectedCharacter);
+        }, 500);
 
         var selectedEnemy = null;
         this.onCreateAttackable(function(attackableCharacter) {
@@ -45,6 +50,13 @@ var HelloWorldLayer = _globals.game = InteractiveTopDownLayer.extend({
 
                 selectedCharacter.fullAttack(selectedCharacter.attacks[0], selectedEnemy);
             }, true);
+
+            attackableCharacter.onHold(
+                selectedCharacter.onEnemyHoldEnter.bind(attackableCharacter),
+                selectedCharacter.onEnemyHoldExit.bind(attackableCharacter),
+                500,
+                true
+            );
 
             attackableCharacter.onExit(function() {
                 selectedEnemy = null;

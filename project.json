@@ -28,6 +28,8 @@
             "libs/modules/attack-closest.js",
             "libs/modules/method-full-attack.js",
             "libs/modules/method-seek.js",
+            "libs/modules/method-onhold-frenzy.js",
+            "libs/modules/method-onhold-dodger.js",
 
 
             "libs/attacks/attack.js",

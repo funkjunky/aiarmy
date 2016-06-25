@@ -24,8 +24,15 @@ var Battler = Engager.extend({
         this.addChild(healthBackground);
     },
     takeAttack: function(attack, attacker) {
-        this.takeDamage(attack.dmg, attacker);
-        Event.trigger('attackTaken', [this], {attacker: attacker});
+        if(this.dodge && Math.random() < this.dodge)
+            BubbleText.quickPrint('Miss!', this, {panOffset: {x: 32 - Math.random() * 64, y: 64}, color: cc.color(122,122,255)});
+        else {
+            var dmg = attack.dmg;
+            if(this.dmgTakenMod)
+                dmg *= this.dmgTakenMod;
+            this.takeDamage(dmg, attacker);
+            Event.trigger('attackTaken', [this], {attacker: attacker});
+        }
     },
     takeDamage: function(dmg, attacker) {
         var color = ((this.tags.indexOf('player') != -1)?cc.color(255,122,122):cc.color(255,255,255));
